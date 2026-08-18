@@ -5,6 +5,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+SCHEMA_FILES = [
+    "protocol/schema/connection.schema.json",
+    "protocol/schema/path.schema.json",
+    "protocol/schema/operation.schema.json",
+    "protocol/schema/plan.schema.json",
+    "protocol/schema/result.schema.json",
+    "protocol/schema/audit.schema.json",
+]
+
 REQUIRED = [
     "README.md",
     "ARCHITECTURE.md",
@@ -14,12 +23,7 @@ REQUIRED = [
     "manifests/agents.json",
     "manifests/skills.json",
     "manifests/discovery.json",
-    "protocol/schema/connection.schema.json",
-    "protocol/schema/path.schema.json",
-    "protocol/schema/operation.schema.json",
-    "protocol/schema/plan.schema.json",
-    "protocol/schema/result.schema.json",
-    "protocol/schema/audit.schema.json",
+    *SCHEMA_FILES,
     "skills/remote-file-operations/SKILL.md",
     "skills/remote-deploy/SKILL.md",
     "skills/artifact-publisher/SKILL.md",
@@ -93,6 +97,15 @@ def main() -> int:
     for path in REQUIRED:
         if path.endswith(".json"):
             load_json(path)
+
+    for schema_path in SCHEMA_FILES:
+        schema = load_json(schema_path)
+        schema_id = schema.get("$id", "")
+        title = schema.get("title", "")
+        if "AgentFS" in title or "agentfs.dev" in schema_id:
+            raise SystemExit(f"retired schema identity found in {schema_path}")
+        if "AvaTar-ArTs/AgentFileOps" not in schema_id:
+            raise SystemExit(f"schema id does not use AgentFileOps canonical source: {schema_path}")
 
     operation = load_json("protocol/schema/operation.schema.json")
     operations = operation["properties"]["operation"]["enum"]
