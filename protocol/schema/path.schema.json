@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfs.dev/schema/0.1/path.schema.json",
+  "title": "AgentFS PathSpec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["connection", "base", "path"],
+  "properties": {
+    "connection": {"type": "string", "minLength": 1},
+    "base": {"type": "string", "minLength": 1},
+    "path": {"type": "string"},
+    "follow_symlinks": {"type": "boolean", "default": false}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"base": {"const": "absolute"}}, "required": ["base"]},
+      "then": {"properties": {"path": {"pattern": "^/"}}}
+    }
+  ]
+}
