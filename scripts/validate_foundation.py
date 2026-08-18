@@ -49,6 +49,27 @@ ACTIVE_NAMING_SURFACES = [
     ".github/workflows/foundation.yml",
 ]
 
+STALE_ACTIVE_PATTERNS = [
+    "# AgentFS",
+    "AgentFS Protocol",
+    "AgentFS Security",
+    "AgentFS Orchestrator",
+    "AgentFS Protocol Architect",
+    "AgentFS Security Reviewer",
+    "AgentFS Conformance Verifier",
+    "AgentFS-connected",
+    "canonical AgentFS",
+    "AgentFS semantic",
+    "AgentFS service",
+    "AgentFS compatibility",
+    "AgentFS provider",
+    "@avatar-arts/agentfs",
+    "agentfs-core",
+    "agentfs-cli",
+    "agentfsd",
+    "agentfs.",
+]
+
 
 def load_json(relative: str):
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
@@ -102,14 +123,11 @@ def main() -> int:
 
     for active_surface in ACTIVE_NAMING_SURFACES:
         text = (ROOT / active_surface).read_text(encoding="utf-8")
-        if "AgentFS" in text:
-            raise SystemExit(
-                f"retired AgentFS name found in active surface: {active_surface}"
-            )
-        if "agentfs" in text.lower():
-            raise SystemExit(
-                f"retired agentfs identifier found in active surface: {active_surface}"
-            )
+        for stale in STALE_ACTIVE_PATTERNS:
+            if stale in text:
+                raise SystemExit(
+                    f"retired active identifier {stale!r} found in: {active_surface}"
+                )
 
     retired_paths = [
         "cmd/agentfsd",
