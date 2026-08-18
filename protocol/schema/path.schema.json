@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://agentfs.dev/schema/0.1/path.schema.json",
-  "title": "AgentFS PathSpec",
+  "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/path.schema.json",
+  "title": "AgentFileOps PathSpec",
+  "description": "Logical AgentFileOps path identity for home-, alias-, or explicit absolute-path operations.",
   "type": "object",
   "additionalProperties": false,
   "required": ["connection", "base", "path"],
