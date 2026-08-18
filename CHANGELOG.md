@@ -6,6 +6,10 @@ All notable AgentFileOps changes should be recorded here. Protocol changes, comp
 
 ### Added
 
+- Live Rust SSH/SFTP transport using `russh` and `russh-sftp` for strict-key connection, public-key authentication, SFTP listing, stat/lstat, bounded reads, and additive writes.
+- Ephemeral localhost OpenSSH integration fixture covering unknown and mismatched host keys, authentication failure, valid authentication, file metadata, bounded reads, and additive-write conflicts.
+- `afo sftp list`, `afo sftp stat`, `afo sftp read`, and `afo sftp write-new` CLI commands with structured JSON output and fail-closed transport errors.
+- VS03 transport verification record and local SSH/SFTP and CLI how-to documentation.
 - Approved provider- and language-agnostic AgentFileOps product architecture.
 - Protocol-first repository boundary.
 - Connection, path, operation, preflight-plan, result, and audit schemas for protocol 0.1 foundation.
@@ -29,6 +33,8 @@ All notable AgentFileOps changes should be recorded here. Protocol changes, comp
 
 ### Changed
 
+- Added OpenSSH server installation to Ubuntu foundation CI so the real transport fixture runs with the workspace tests.
+- Kept destructive delete, recursive sync, archive, transfer-ticket, and arbitrary shell behavior outside the VS03 release boundary.
 - Renamed the public product from the temporary `AgentFS` working name to **AgentFileOps** after repository/name-collision research.
 - Established **Remote File Operations for AI Agents** as the canonical category phrase.
 - Established **Safe Remote Filesystem, SSH/SFTP, Sync & Deployment Operations for AI Agents** as the SEO subtitle.
@@ -42,4 +48,4 @@ All notable AgentFileOps changes should be recorded here. Protocol changes, comp
 
 ### Status
 
-Foundation plus first conformance slice. Task-oriented skills and discovery metadata exist, but no production-ready AgentFileOps SSH/SFTP runtime is claimed yet.
+Foundation plus semantic VS01/VS02 conformance and an experimentally verified VS03 SSH/SFTP transport slice. The broader runtime, adapters, destructive operations, and production certification remain in progress.

@@ -1,142 +1,164 @@
 use crate::TransportError;
+use russh_sftp::client::SftpSession;
+use russh_sftp::protocol::{FileAttributes, OpenFlags};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
+use tokio::io::{AsyncReadExt, AsyncSeekExt, AsyncWriteExt};
 
-/// Metadata about a remote file or directory.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RemoteStat {
-    /// File size in bytes
     pub size: u64,
-
-    /// Unix permission bits (0o755, etc.)
     pub permissions: u32,
-
-    /// UNIX timestamp of last modification
     pub mtime: u64,
-
-    /// File type (file, directory, symlink, etc.)
     pub file_type: RemoteFileType,
 }
 
-/// Classifies remote file types.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RemoteFileType {
-    /// Regular file
     File,
-
-    /// Directory
     Directory,
-
-    /// Symbolic link
     Symlink,
-
-    /// Other type (device, socket, etc.)
     Other,
 }
 
-/// Entry from a remote directory listing.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RemoteEntry {
-    /// File or directory name (not full path)
     pub name: String,
-
-    /// Metadata
     pub stat: RemoteStat,
 }
 
-/// Result of a remote file write operation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WriteResult {
-    /// Number of bytes written
     pub bytes_written: u64,
-
-    /// SHA256 checksum of written data (optional)
     pub checksum: Option<String>,
 }
 
-/// Wrapper for SFTP operations over AgentFileOps protocol.
-///
-/// Enforces semantic operations instead of raw SFTP commands.
-/// No arbitrary shell execution is exposed.
+/// Semantic SFTP operations backed by a live russh SFTP subsystem.
 pub struct AgentFileOpsSftp {
-    // In a real implementation, this would hold a live SFTP session
-    _private: (),
+    session: Arc<SftpSession>,
+    inline_read_limit: u64,
 }
 
 impl AgentFileOpsSftp {
-    /// Create a new SFTP session wrapper.
-    pub fn new() -> Self {
-        Self { _private: () }
+    pub(crate) fn from_session(session: SftpSession, inline_read_limit: u64) -> Self {
+        Self {
+            session: Arc::new(session),
+            inline_read_limit,
+        }
     }
 
-    /// List directory contents.
-    ///
-    /// # Arguments
-    /// * `path` - Remote path to list
-    /// * `limit` - Maximum entries to return
     pub async fn list(
         &self,
-        _path: &str,
-        _limit: Option<usize>,
+        path: &str,
+        limit: Option<usize>,
     ) -> Result<Vec<RemoteEntry>, TransportError> {
-        // Placeholder: real implementation would call SFTP opendir/readdir
-        Err(TransportError::Sftp(
-            "list operation not yet implemented".to_string(),
-        ))
+        let mut entries = Vec::new();
+        for entry in self.session.read_dir(path).await.map_err(sftp_error)? {
+            if limit.is_some_and(|max| entries.len() >= max) {
+                break;
+            }
+            let metadata = entry.metadata();
+            entries.push(RemoteEntry {
+                name: entry.file_name(),
+                stat: metadata.into(),
+            });
+        }
+        Ok(entries)
     }
 
-    /// Get file metadata.
-    pub async fn stat(&self, _path: &str) -> Result<RemoteStat, TransportError> {
-        // Placeholder
-        Err(TransportError::Sftp(
-            "stat operation not yet implemented".to_string(),
-        ))
+    pub async fn lstat(&self, path: &str) -> Result<RemoteStat, TransportError> {
+        self.session
+            .symlink_metadata(path)
+            .await
+            .map(Into::into)
+            .map_err(sftp_error)
     }
 
-    /// Read file contents with byte limit.
+    pub async fn stat(&self, path: &str) -> Result<RemoteStat, TransportError> {
+        self.session
+            .metadata(path)
+            .await
+            .map(Into::into)
+            .map_err(sftp_error)
+    }
+
     pub async fn read(
         &self,
-        _path: &str,
-        _offset: u64,
-        _limit: u64,
+        path: &str,
+        offset: u64,
+        limit: u64,
     ) -> Result<Vec<u8>, TransportError> {
-        // Placeholder
-        Err(TransportError::Sftp(
-            "read operation not yet implemented".to_string(),
-        ))
+        if limit == 0 || limit > self.inline_read_limit {
+            return Err(TransportError::ReadLimitExceeded {
+                limit: self.inline_read_limit,
+            });
+        }
+        let mut file = self.session.open(path).await.map_err(sftp_error)?;
+        file.seek(std::io::SeekFrom::Start(offset))
+            .await
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        let mut data = Vec::with_capacity(limit as usize);
+        file.take(limit + 1)
+            .read_to_end(&mut data)
+            .await
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        if data.len() as u64 > limit {
+            return Err(TransportError::ReadLimitExceeded { limit });
+        }
+        Ok(data)
     }
 
-    /// Write file contents (new file only, no overwrite).
-    pub async fn write_new(
-        &self,
-        _path: &str,
-        _data: &[u8],
-    ) -> Result<WriteResult, TransportError> {
-        // Placeholder
-        Err(TransportError::Sftp(
-            "write_new operation not yet implemented".to_string(),
-        ))
+    pub async fn write_new(&self, path: &str, data: &[u8]) -> Result<WriteResult, TransportError> {
+        if self.session.try_exists(path).await.map_err(sftp_error)? {
+            return Err(TransportError::Conflict(path.to_string()));
+        }
+        let mut file = self
+            .session
+            .open_with_flags(
+                path,
+                OpenFlags::CREATE | OpenFlags::EXCLUDE | OpenFlags::WRITE,
+            )
+            .await
+            .map_err(sftp_error)?;
+        file.write_all(data)
+            .await
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        file.shutdown()
+            .await
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        Ok(WriteResult {
+            bytes_written: data.len() as u64,
+            checksum: None,
+        })
     }
 
-    /// Create directory.
-    pub async fn mkdir(&self, _path: &str, _mode: u32) -> Result<(), TransportError> {
-        // Placeholder
-        Err(TransportError::Sftp(
-            "mkdir operation not yet implemented".to_string(),
-        ))
-    }
-
-    /// Delete file.
-    pub async fn delete(&self, _path: &str) -> Result<(), TransportError> {
-        // Placeholder
-        Err(TransportError::Sftp(
-            "delete operation not yet implemented".to_string(),
-        ))
+    pub async fn mkdir(&self, path: &str, _mode: u32) -> Result<(), TransportError> {
+        self.session.create_dir(path).await.map_err(sftp_error)
     }
 }
 
-impl Default for AgentFileOpsSftp {
-    fn default() -> Self {
-        Self::new()
+fn sftp_error(error: impl std::fmt::Display) -> TransportError {
+    TransportError::Sftp(error.to_string())
+}
+
+impl From<FileAttributes> for RemoteStat {
+    fn from(attributes: FileAttributes) -> Self {
+        let file_type = attributes.file_type();
+        let file_type = if file_type.is_file() {
+            RemoteFileType::File
+        } else if file_type.is_dir() {
+            RemoteFileType::Directory
+        } else if file_type.is_symlink() {
+            RemoteFileType::Symlink
+        } else {
+            RemoteFileType::Other
+        };
+        Self {
+            size: attributes.size.unwrap_or_default(),
+            permissions: attributes.permissions.unwrap_or_default(),
+            mtime: attributes.mtime.unwrap_or_default() as u64,
+            file_type,
+        }
     }
 }
 
@@ -145,8 +167,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn creates_sftp_wrapper() {
-        let _sftp = AgentFileOpsSftp::new();
-        // Placeholder test
+    fn metadata_conversion_preserves_symlink_identity() {
+        let mut attributes = FileAttributes::empty();
+        attributes.size = Some(12);
+        attributes.permissions = Some(0o120777);
+        let stat: RemoteStat = attributes.into();
+        assert_eq!(stat.size, 12);
+        assert_eq!(stat.file_type, RemoteFileType::Symlink);
+    }
+
+    #[test]
+    fn metadata_conversion_defaults_missing_fields_safely() {
+        let stat: RemoteStat = FileAttributes::empty().into();
+        assert_eq!(stat.size, 0);
+        assert_eq!(stat.permissions, 0);
+        assert_eq!(stat.mtime, 0);
+        assert_eq!(stat.file_type, RemoteFileType::Other);
     }
 }

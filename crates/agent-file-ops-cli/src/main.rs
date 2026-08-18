@@ -2,9 +2,13 @@ use agent_file_ops_core::{
     classify_risk, normalize_path, resolve_connection_path, select_backend_strategy,
     AgentFileOpsError, ConnectionCapabilities, ConnectionDescriptor,
 };
-use clap::{Parser, Subcommand};
+use agent_file_ops_ssh::{
+    AgentFileOpsSftp, AgentFileOpsSshSession, RemoteStat, SshTransportConfig, TransportError,
+};
+use clap::{Args, Parser, Subcommand};
 use serde::Serialize;
 use std::collections::BTreeMap;
+use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(name = "afo")]
@@ -58,6 +62,66 @@ enum Command {
         #[arg(long = "command")]
         commands: Vec<String>,
     },
+    Sftp {
+        #[command(subcommand)]
+        command: SftpCommand,
+    },
+}
+
+#[derive(Subcommand)]
+enum SftpCommand {
+    List(SftpPathArgs),
+    Stat(SftpPathArgs),
+    Read(SftpReadArgs),
+    WriteNew(SftpWriteArgs),
+}
+
+#[derive(Args, Clone)]
+struct SftpConnectionArgs {
+    #[arg(long)]
+    host: String,
+    #[arg(long, default_value_t = 22)]
+    port: u16,
+    #[arg(long)]
+    username: String,
+    #[arg(long)]
+    known_hosts: String,
+    #[arg(long)]
+    credential: String,
+    #[arg(long, default_value_t = agent_file_ops_ssh::MAX_INLINE_READ_BYTES)]
+    inline_read_bytes: u64,
+}
+
+#[derive(Args, Clone)]
+struct SftpPathArgs {
+    #[command(flatten)]
+    connection: SftpConnectionArgs,
+    #[arg(long)]
+    path: String,
+    #[arg(long)]
+    limit: Option<usize>,
+}
+
+#[derive(Args, Clone)]
+struct SftpReadArgs {
+    #[command(flatten)]
+    connection: SftpConnectionArgs,
+    #[arg(long)]
+    path: String,
+    #[arg(long, default_value_t = 0)]
+    offset: u64,
+    #[arg(long)]
+    limit: u64,
+}
+
+#[derive(Args, Clone)]
+struct SftpWriteArgs {
+    #[command(flatten)]
+    connection: SftpConnectionArgs,
+    #[arg(long)]
+    path: String,
+    #[arg(long, value_name = "FILE")]
+    data_file: PathBuf,
 }
 
 #[derive(Serialize)]
@@ -70,6 +134,13 @@ struct RiskResponse<'a> {
 struct ErrorResponse<'a> {
     code: &'a str,
     message: String,
+}
+
+#[derive(Serialize)]
+struct ReadResponse {
+    path: String,
+    offset: u64,
+    bytes: Vec<u8>,
 }
 
 fn emit_error(error: AgentFileOpsError) -> ! {
@@ -96,6 +167,38 @@ fn emit_cli_error(code: &'static str, message: impl Into<String>) -> ! {
     std::process::exit(2);
 }
 
+fn emit_transport_error(error: TransportError) -> ! {
+    let body = ErrorResponse {
+        code: "transport_error",
+        message: error.to_string(),
+    };
+    eprintln!(
+        "{}",
+        serde_json::to_string(&body).expect("error serialization")
+    );
+    std::process::exit(2);
+}
+
+async fn open_sftp(
+    args: &SftpConnectionArgs,
+) -> Result<(AgentFileOpsSshSession, AgentFileOpsSftp), TransportError> {
+    let config =
+        SshTransportConfig::new(&args.host, args.port, &args.known_hosts, &args.credential)
+            .with_username(&args.username)
+            .with_inline_read_limit(args.inline_read_bytes);
+    let mut session = AgentFileOpsSshSession::new(config);
+    session.connect().await?;
+    let sftp = session.open_sftp().await?;
+    Ok((session, sftp))
+}
+
+fn print_stat(stat: RemoteStat) {
+    println!(
+        "{}",
+        serde_json::to_string(&stat).expect("stat serialization")
+    );
+}
+
 fn parse_aliases(values: Vec<String>) -> BTreeMap<String, String> {
     let mut aliases = BTreeMap::new();
     for value in values {
@@ -113,7 +216,8 @@ fn parse_aliases(values: Vec<String>) -> BTreeMap<String, String> {
     aliases
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let cli = Cli::parse();
     match cli.command {
         Command::NormalizePath {
@@ -190,5 +294,71 @@ fn main() {
                 Err(error) => emit_error(error),
             }
         }
+        Command::Sftp { command } => match command {
+            SftpCommand::List(args) => {
+                let (mut session, sftp) = open_sftp(&args.connection)
+                    .await
+                    .unwrap_or_else(|error| emit_transport_error(error));
+                let result = sftp.list(&args.path, args.limit).await;
+                let _ = session.disconnect().await;
+                match result {
+                    Ok(value) => println!(
+                        "{}",
+                        serde_json::to_string(&value).expect("list serialization")
+                    ),
+                    Err(error) => emit_transport_error(error),
+                }
+            }
+            SftpCommand::Stat(args) => {
+                let (mut session, sftp) = open_sftp(&args.connection)
+                    .await
+                    .unwrap_or_else(|error| emit_transport_error(error));
+                let result = sftp.stat(&args.path).await;
+                let _ = session.disconnect().await;
+                match result {
+                    Ok(value) => print_stat(value),
+                    Err(error) => emit_transport_error(error),
+                }
+            }
+            SftpCommand::Read(args) => {
+                let (mut session, sftp) = open_sftp(&args.connection)
+                    .await
+                    .unwrap_or_else(|error| emit_transport_error(error));
+                let result = sftp.read(&args.path, args.offset, args.limit).await;
+                let _ = session.disconnect().await;
+                match result {
+                    Ok(bytes) => println!(
+                        "{}",
+                        serde_json::to_string(&ReadResponse {
+                            path: args.path,
+                            offset: args.offset,
+                            bytes,
+                        })
+                        .expect("read serialization")
+                    ),
+                    Err(error) => emit_transport_error(error),
+                }
+            }
+            SftpCommand::WriteNew(args) => {
+                let data = std::fs::read(&args.data_file).unwrap_or_else(|error| {
+                    emit_cli_error(
+                        "local_input_error",
+                        format!("failed to read {}: {error}", args.data_file.display()),
+                    )
+                });
+                let (mut session, sftp) = open_sftp(&args.connection)
+                    .await
+                    .unwrap_or_else(|error| emit_transport_error(error));
+                let result = sftp.write_new(&args.path, &data).await;
+                let _ = session.disconnect().await;
+                match result {
+                    Ok(value) => println!(
+                        "{}",
+                        serde_json::to_string(&value).expect("write serialization")
+                    ),
+                    Err(error) => emit_transport_error(error),
+                }
+            }
+        },
     }
 }

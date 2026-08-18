@@ -1,7 +1,8 @@
 # AgentFileOps Go SDK
 
-Go SDK for AgentFileOps protocol.
+Typed Go wrapper around the verified `afo` policy CLI.
 
 ## Status
 
-Early-stage development. Agent-file-opsd daemon implements this.
+The current SDK supports path normalization and risk classification. It does
+not expose arbitrary shell execution or claim live SSH/SFTP support yet.

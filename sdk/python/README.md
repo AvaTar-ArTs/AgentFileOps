@@ -1,7 +1,16 @@
 # AgentFileOps Python SDK
 
-Python SDK for AgentFileOps protocol.
+The Python SDK is a small automation wrapper around the verified `afo` policy
+CLI. It supports path normalization, risk classification, and backend strategy
+selection without exposing arbitrary command execution.
 
-## Status
+```python
+from agentfileops import Client
 
-Early-stage development. Tracks agent-file-ops Rust implementation.
+client = Client(binary="afo")
+print(client.normalize_path("home", "domains/example.com/public_html"))
+print(client.classify_risk("write-new"))
+```
+
+Live SSH/SFTP methods will be added only after the Rust transport integration
+fixture is part of the supported release gate.

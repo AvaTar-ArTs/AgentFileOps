@@ -1,85 +1,184 @@
-use crate::{CredentialRef, SshTransportConfig, TransportError};
+use crate::{
+    AgentFileOpsSftp, CredentialRef, SshTransportConfig, StrictHostKeyVerifier, TransportError,
+};
+use russh::client::{self, Handle};
+use russh::keys::{load_secret_key, PrivateKeyWithHashAlg};
+use russh::Disconnect;
 use std::sync::Arc;
+use std::time::Duration;
 
-/// AgentFileOps SSH session lifecycle manager.
-///
-/// Manages authentication, known-hosts verification, and session state.
-/// Credentials are never stored directly; only references are kept.
+#[derive(Debug, thiserror::Error)]
+enum SessionError {
+    #[error(transparent)]
+    Russh(#[from] russh::Error),
+    #[error(transparent)]
+    Transport(#[from] TransportError),
+}
+
+struct Handler {
+    host: String,
+    port: u16,
+    known_hosts: String,
+}
+
+impl client::Handler for Handler {
+    type Error = SessionError;
+
+    async fn check_server_key(
+        &mut self,
+        server_public_key: &ssh_key::PublicKey,
+    ) -> Result<bool, Self::Error> {
+        StrictHostKeyVerifier::verify_public_key(
+            &self.host,
+            self.port,
+            server_public_key,
+            &self.known_hosts,
+        )?;
+        Ok(true)
+    }
+}
+
+/// Live SSH session with strict host-key verification and SFTP-only public operations.
 pub struct AgentFileOpsSshSession {
     config: Arc<SshTransportConfig>,
-    authenticated: bool,
+    handle: Option<Handle<Handler>>,
 }
 
 impl AgentFileOpsSshSession {
-    /// Create a new SSH session (not yet connected).
+    /// Create a disconnected session configuration.
     pub fn new(config: SshTransportConfig) -> Self {
         Self {
             config: Arc::new(config),
-            authenticated: false,
+            handle: None,
         }
     }
 
-    /// Get the configuration (non-mutable access).
     pub fn config(&self) -> &SshTransportConfig {
         &self.config
     }
 
-    /// Check if session is authenticated.
     pub fn is_authenticated(&self) -> bool {
-        self.authenticated
+        self.handle.is_some()
     }
 
-    /// Connect and authenticate using the credential reference.
-    ///
-    /// In a real implementation, this would:
-    /// 1. Resolve credential_ref from a secure store
-    /// 2. Connect to host:port
-    /// 3. Verify host key against known_hosts_ref
-    /// 4. Authenticate with the resolved credential
-    ///
-    /// For now, this is a placeholder that validates configuration.
+    /// Connect, verify the server key, and authenticate with a referenced key file.
     pub async fn connect(&mut self) -> Result<(), TransportError> {
-        // Validate configuration before attempting connection
         self.config
             .validate()
             .map_err(TransportError::InvalidConfig)?;
+        let username =
+            self.config.username.as_deref().ok_or_else(|| {
+                TransportError::InvalidConfig("username must be configured".into())
+            })?;
+        let key_path = self.resolve_credential_path()?;
+        let key = load_secret_key(&key_path, None)
+            .map_err(|error| TransportError::KeyLoadFailed(error.to_string()))?;
+        let handler = Handler {
+            host: self.config.host.clone(),
+            port: self.config.port,
+            known_hosts: self.config.known_hosts_ref.clone(),
+        };
+        let ssh_config = client::Config {
+            inactivity_timeout: Some(Duration::from_secs(self.config.operation_timeout_secs)),
+            ..Default::default()
+        };
+        let mut handle = tokio::time::timeout(
+            Duration::from_secs(self.config.connect_timeout_secs),
+            client::connect(
+                Arc::new(ssh_config),
+                (self.config.host.as_str(), self.config.port),
+                handler,
+            ),
+        )
+        .await
+        .map_err(|_| TransportError::ConnectionTimeout)?
+        .map_err(session_error)?;
 
-        // In a real implementation:
-        // - Resolve self.config.known_hosts_ref
-        // - Resolve self.config.credential_ref
-        // - Create SSH connection
-        // - Perform strict host key verification
-        // - Authenticate
-        // - Mark authenticated = true
-
-        self.authenticated = true;
+        let auth = handle
+            .authenticate_publickey(
+                username,
+                PrivateKeyWithHashAlg::new(
+                    Arc::new(key),
+                    handle
+                        .best_supported_rsa_hash()
+                        .await
+                        .map_err(|error| session_error(SessionError::Russh(error)))?
+                        .flatten(),
+                ),
+            )
+            .await
+            .map_err(|error| session_error(SessionError::Russh(error)))?;
+        if !auth.success() {
+            return Err(TransportError::AuthenticationFailed);
+        }
+        self.handle = Some(handle);
         Ok(())
     }
 
-    /// Disconnect and clean up session.
-    pub async fn disconnect(&mut self) -> Result<(), TransportError> {
-        self.authenticated = false;
-        Ok(())
-    }
-
-    /// Perform a credential reference lookup (mock for now).
-    ///
-    /// Real implementation would resolve env vars, vault paths, etc.
-    pub fn resolve_credential_ref(
-        &self,
-        _cred_ref: &CredentialRef,
-    ) -> Result<String, TransportError> {
-        // Placeholder: in production, resolve from secure store
-        Err(TransportError::AgentUnavailable(
-            "credential resolution not yet implemented".to_string(),
+    /// Open the SFTP subsystem. No shell or generic command channel is exposed.
+    pub async fn open_sftp(&mut self) -> Result<AgentFileOpsSftp, TransportError> {
+        let handle = self
+            .handle
+            .as_mut()
+            .ok_or_else(|| TransportError::ConnectionFailed("session is not connected".into()))?;
+        let channel = handle
+            .channel_open_session()
+            .await
+            .map_err(|error| TransportError::ConnectionFailed(error.to_string()))?;
+        channel
+            .request_subsystem(true, "sftp")
+            .await
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        let sftp = russh_sftp::client::SftpSession::new(channel.into_stream())
+            .await
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        sftp.set_timeout(self.config.operation_timeout_secs);
+        Ok(AgentFileOpsSftp::from_session(
+            sftp,
+            self.config.inline_read_limit.get(),
         ))
+    }
+
+    pub async fn disconnect(&mut self) -> Result<(), TransportError> {
+        if let Some(handle) = self.handle.take() {
+            handle
+                .disconnect(Disconnect::ByApplication, "", "AgentFileOps")
+                .await
+                .map_err(|error| TransportError::ConnectionFailed(error.to_string()))?;
+        }
+        Ok(())
+    }
+
+    fn resolve_credential_path(&self) -> Result<String, TransportError> {
+        let reference = CredentialRef::parse(&self.config.credential_ref);
+        let path = if let Some(name) = reference.env_var_name() {
+            std::env::var(name).map_err(|_| {
+                TransportError::KeyLoadFailed(format!(
+                    "credential path environment variable is unavailable: {name}"
+                ))
+            })?
+        } else {
+            reference.ref_id
+        };
+        if path.is_empty() {
+            return Err(TransportError::KeyLoadFailed(
+                "credential path is empty".into(),
+            ));
+        }
+        Ok(path)
+    }
+}
+
+fn session_error(error: SessionError) -> TransportError {
+    match error {
+        SessionError::Transport(error) => error,
+        SessionError::Russh(error) => TransportError::ConnectionFailed(error.to_string()),
     }
 }
 
 impl Drop for AgentFileOpsSshSession {
     fn drop(&mut self) {
-        // Cleanup: close connection if open
-        self.authenticated = false;
+        self.handle.take();
     }
 }
 
@@ -89,31 +188,19 @@ mod tests {
 
     #[tokio::test]
     async fn creates_unconnected_session() {
-        let config = SshTransportConfig::new("example.com", 22, "known_hosts", "my-key");
+        let config = SshTransportConfig::new("example.com", 22, "known_hosts", "my-key")
+            .with_username("agent");
         let session = AgentFileOpsSshSession::new(config);
-
         assert!(!session.is_authenticated());
     }
 
     #[tokio::test]
-    async fn validates_config_on_connect() {
+    async fn refuses_live_connect_without_username() {
         let config = SshTransportConfig::new("example.com", 22, "known_hosts", "my-key");
         let mut session = AgentFileOpsSshSession::new(config);
-
-        // Should succeed (config is valid)
-        assert!(session.connect().await.is_ok());
-        assert!(session.is_authenticated());
-    }
-
-    #[tokio::test]
-    async fn rejects_invalid_config_on_connect() {
-        let config = SshTransportConfig::new("", 22, "known_hosts", "my-key");
-        let mut session = AgentFileOpsSshSession::new(config);
-
         assert!(matches!(
             session.connect().await,
-            Err(TransportError::InvalidConfig(message)) if message == "host must not be empty"
+            Err(TransportError::InvalidConfig(message)) if message == "username must be configured"
         ));
-        assert!(!session.is_authenticated());
     }
 }

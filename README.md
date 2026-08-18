@@ -83,11 +83,7 @@ Safety boundaries:
 
 ### In progress
 
-- live SSH/SFTP connection and backend execution;
-- real SSH/SFTP transport behavior;
-- strict host-key verification implementation;
-- bounded remote reads and additive writes;
-- integration fixtures;
+- live SSH/SFTP connection and bounded SFTP operations (VS03 transport slice; broader production certification remains in progress);
 - MCP and SDK adapters.
 
 ### Not published as a public runtime
@@ -118,7 +114,7 @@ python -m pytest tests/conformance/test_vertical_slice_01.py \
   tests/conformance/test_vertical_slice_03.py -v -ra
 ```
 
-Vertical Slice 02 is implemented as a semantic, no-network conformance slice. Vertical Slice 03 remains an explicit skipped placeholder until live SSH/SFTP operations and integration fixtures are available.
+Vertical Slice 02 is implemented as a semantic, no-network conformance slice. Vertical Slice 03 now has a Rust ephemeral OpenSSH/SFTP integration slice; its broader Python operation-suite placeholders remain explicitly skipped.
 
 ## Build the supported CLI package
 
@@ -138,6 +134,9 @@ The resulting `.zip` and `.tar.gz` archives are small binary packages containing
 | What are the system boundaries? | [Architecture](ARCHITECTURE.md) |
 | What is forbidden or safety-sensitive? | [Security policy](SECURITY.md) |
 | What is actually demonstrated? | [Foundation audit](AUDIT_REPORT.md) |
+| How do I verify it locally? | [Verification how-to](docs/howtos/VERIFY.md) |
+| How do I use the SFTP CLI? | [CLI SFTP how-to](docs/howtos/CLI_SFTP.md) |
+| How does the local SSH fixture work? | [OpenSSH how-to](docs/howtos/LOCAL_OPENSSH.md) |
 | How does it compare with adjacent tools? | [Comparator review](docs/research/COMPARATOR_REVIEW.md) |
 | What names and package targets are reserved? | [Discovery manifest](manifests/discovery.json) |
 | How are agent skills defined? | [Skill contracts](skills/) |

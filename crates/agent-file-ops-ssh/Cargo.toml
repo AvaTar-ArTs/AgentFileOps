@@ -12,6 +12,7 @@ categories.workspace = true
 [dependencies]
 russh.workspace = true
 russh-sftp.workspace = true
+ssh-key.workspace = true
 serde.workspace = true
 thiserror.workspace = true
 tokio.workspace = true

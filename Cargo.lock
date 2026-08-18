@@ -50,9 +50,11 @@ name = "agent-file-ops-cli"
 version = "0.1.0"
 dependencies = [
  "agent-file-ops-core",
+ "agent-file-ops-ssh",
  "clap",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
@@ -70,6 +72,7 @@ dependencies = [
  "russh",
  "russh-sftp",
  "serde",
+ "ssh-key",
  "tempfile",
  "thiserror",
  "tokio",

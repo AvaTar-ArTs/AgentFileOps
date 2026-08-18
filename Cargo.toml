@@ -24,3 +24,4 @@ clap = { version = "4", features = ["derive"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "fs", "time", "net", "io-util", "sync"] }
 russh = "=0.62.5"
 russh-sftp = "=2.4.0"
+ssh-key = "=0.7.0-rc.11"

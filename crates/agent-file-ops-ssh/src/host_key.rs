@@ -10,6 +10,39 @@ use std::path::Path;
 pub struct StrictHostKeyVerifier;
 
 impl StrictHostKeyVerifier {
+    /// Verify a russh server key using the same OpenSSH representation used
+    /// by known_hosts. Unknown keys and mismatches remain fail-closed.
+    pub fn verify_public_key(
+        host: &str,
+        port: u16,
+        key: &ssh_key::PublicKey,
+        known_hosts_path: impl AsRef<Path>,
+    ) -> Result<(), TransportError> {
+        let encoded =
+            key.to_openssh()
+                .map_err(|error| TransportError::HostKeyVerificationFailed {
+                    host: host.to_string(),
+                    port,
+                    message: error.to_string(),
+                })?;
+        let mut fields = encoded.split_whitespace();
+        let key_type = fields
+            .next()
+            .ok_or_else(|| TransportError::HostKeyVerificationFailed {
+                host: host.to_string(),
+                port,
+                message: "server key has no algorithm".to_string(),
+            })?;
+        let key_data = fields
+            .next()
+            .ok_or_else(|| TransportError::HostKeyVerificationFailed {
+                host: host.to_string(),
+                port,
+                message: "server key has no key data".to_string(),
+            })?;
+        Self::verify(host, port, key_type, key_data, known_hosts_path)
+    }
+
     /// Verify a host key against known_hosts.
     ///
     /// # Arguments
