@@ -13,13 +13,14 @@ REQUIRED = [
     "manifests/source-lock.json",
     "manifests/agents.json",
     "manifests/skills.json",
+    "manifests/discovery.json",
     "protocol/schema/connection.schema.json",
     "protocol/schema/path.schema.json",
     "protocol/schema/operation.schema.json",
     "protocol/schema/plan.schema.json",
     "protocol/schema/result.schema.json",
     "protocol/schema/audit.schema.json",
-    "skills/remote-filesystem/SKILL.md",
+    "skills/remote-file-operations/SKILL.md",
     "skills/protocol-conformance/SKILL.md",
     "tests/conformance/README.md",
     "crates/README.md",
@@ -29,6 +30,7 @@ REQUIRED = [
     "cmd/agent-file-opsd/README.md",
     "presets/hostinger/README.md",
     "docs/ecosystem/AGENT_SKILL_REVIEW.md",
+    "docs/distribution/DISCOVERY_SEO.md",
     "docs/verification/VERTICAL_SLICE_01.md",
 ]
 
@@ -36,7 +38,7 @@ ACTIVE_NAMING_SURFACES = [
     "ARCHITECTURE.md",
     "SECURITY.md",
     "protocol/README.md",
-    "skills/remote-filesystem/SKILL.md",
+    "skills/remote-file-operations/SKILL.md",
     "skills/protocol-conformance/SKILL.md",
     "packages/README.md",
     "crates/README.md",
@@ -45,6 +47,7 @@ ACTIVE_NAMING_SURFACES = [
     "cmd/agent-file-opsd/README.md",
     "presets/hostinger/README.md",
     "docs/ecosystem/AGENT_SKILL_REVIEW.md",
+    "docs/distribution/DISCOVERY_SEO.md",
     "docs/verification/VERTICAL_SLICE_01.md",
     ".github/workflows/foundation.yml",
 ]
@@ -121,6 +124,18 @@ def main() -> int:
         if expected not in skill_ids:
             raise SystemExit(f"missing AgentFileOps skill: {expected}")
 
+    discovery = load_json("manifests/discovery.json")
+    if discovery.get("product") != "AgentFileOps":
+        raise SystemExit("discovery manifest must identify AgentFileOps")
+    if discovery.get("category_phrase") != "Remote File Operations for AI Agents":
+        raise SystemExit("canonical category phrase drifted")
+    expected_keywords = {"mcp", "remote-filesystem", "ssh", "sftp", "file-transfer"}
+    npm_keywords = set(discovery["npm"]["keywords"])
+    if not expected_keywords.issubset(npm_keywords):
+        raise SystemExit("core npm discovery keywords are incomplete")
+    if discovery["skills_sh"]["primary"] != "remote-file-operations":
+        raise SystemExit("primary skills.sh discovery name drifted")
+
     for active_surface in ACTIVE_NAMING_SURFACES:
         text = (ROOT / active_surface).read_text(encoding="utf-8")
         for stale in STALE_ACTIVE_PATTERNS:
@@ -133,10 +148,11 @@ def main() -> int:
         "cmd/agentfsd",
         "crates/agentfs-core",
         "crates/agentfs-cli",
+        "skills/remote-filesystem",
     ]
     leftovers = [p for p in retired_paths if (ROOT / p).exists()]
     if leftovers:
-        raise SystemExit(f"retired AgentFS paths still exist: {leftovers}")
+        raise SystemExit(f"retired AgentFS/discovery paths still exist: {leftovers}")
 
     print("AgentFileOps foundation validation: PASS")
     return 0
