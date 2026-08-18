@@ -1,3 +1,11 @@
+mod connection;
+mod path_resolution;
+mod strategy;
+
+pub use connection::{ConnectionCapabilities, ConnectionDescriptor};
+pub use path_resolution::{resolve_connection_path, ResolvedPath};
+pub use strategy::{select_backend_strategy, BackendStrategy};
+
 use serde::Serialize;
 use thiserror::Error;
 
@@ -28,10 +36,16 @@ pub enum AgentFileOpsError {
     PathEscape,
     #[error("absolute mode requires a path beginning with '/'")]
     AbsolutePathRequired,
+    #[error("absolute path mode is unavailable for the selected backend namespace")]
+    AbsolutePathUnavailable,
     #[error("relative path bases do not accept absolute paths")]
     RelativePathRequired,
     #[error("path contains a NUL byte")]
     InvalidPath,
+    #[error("unknown AgentFileOps alias: {0}")]
+    UnknownAlias(String),
+    #[error("required AgentFileOps backend capability is unavailable for operation: {0}")]
+    CapabilityUnavailable(String),
     #[error("unknown AgentFileOps operation: {0}")]
     UnknownOperation(String),
 }
@@ -41,8 +55,11 @@ impl AgentFileOpsError {
         match self {
             Self::PathEscape => "path_escape",
             Self::AbsolutePathRequired => "absolute_path_required",
+            Self::AbsolutePathUnavailable => "absolute_path_unavailable",
             Self::RelativePathRequired => "relative_path_required",
             Self::InvalidPath => "invalid_path",
+            Self::UnknownAlias(_) => "unknown_alias",
+            Self::CapabilityUnavailable(_) => "capability_unavailable",
             Self::UnknownOperation(_) => "unknown_operation",
         }
     }
