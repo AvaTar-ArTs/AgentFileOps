@@ -21,10 +21,14 @@ REQUIRED = [
     "protocol/schema/result.schema.json",
     "protocol/schema/audit.schema.json",
     "skills/remote-file-operations/SKILL.md",
+    "skills/remote-deploy/SKILL.md",
+    "skills/artifact-publisher/SKILL.md",
+    "skills/remote-sync/SKILL.md",
     "skills/protocol-conformance/SKILL.md",
     "tests/conformance/README.md",
     "crates/README.md",
     "packages/README.md",
+    "packages/package-metadata.json",
     "sdk/python/README.md",
     "sdk/go/README.md",
     "cmd/agent-file-opsd/README.md",
@@ -39,6 +43,9 @@ ACTIVE_NAMING_SURFACES = [
     "SECURITY.md",
     "protocol/README.md",
     "skills/remote-file-operations/SKILL.md",
+    "skills/remote-deploy/SKILL.md",
+    "skills/artifact-publisher/SKILL.md",
+    "skills/remote-sync/SKILL.md",
     "skills/protocol-conformance/SKILL.md",
     "packages/README.md",
     "crates/README.md",
@@ -119,10 +126,18 @@ def main() -> int:
     skill_ids = {entry["id"] for entry in skills["skills"]}
     for expected in {
         "agentfileops.remote-filesystem",
+        "agentfileops.safe-remote-deploy",
+        "agentfileops.remote-sync",
+        "agentfileops.artifact-publisher",
         "agentfileops.protocol-conformance",
     }:
         if expected not in skill_ids:
             raise SystemExit(f"missing AgentFileOps skill: {expected}")
+
+    for entry in skills["skills"]:
+        path = entry.get("path")
+        if not path or not (ROOT / path).is_file():
+            raise SystemExit(f"skill catalog path is missing for {entry['id']}: {path}")
 
     discovery = load_json("manifests/discovery.json")
     if discovery.get("product") != "AgentFileOps":
@@ -135,6 +150,10 @@ def main() -> int:
         raise SystemExit("core npm discovery keywords are incomplete")
     if discovery["skills_sh"]["primary"] != "remote-file-operations":
         raise SystemExit("primary skills.sh discovery name drifted")
+
+    package_metadata = load_json("packages/package-metadata.json")
+    if set(package_metadata["keywords"]) != set(discovery["npm"]["keywords"]):
+        raise SystemExit("npm package keyword metadata drifted from discovery manifest")
 
     for active_surface in ACTIVE_NAMING_SURFACES:
         text = (ROOT / active_surface).read_text(encoding="utf-8")
