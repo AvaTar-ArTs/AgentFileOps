@@ -82,7 +82,7 @@ AgentFileOps is developed as part of the AvaTar-ArTs agent ecosystem. The reposi
 
 ### superAgents — orchestration and governance
 
-[ A vaTar-ArTs/superAgents ](https://github.com/AvaTar-ArTs/superAgents) supplies agent roles and governance patterns for:
+[AvaTar-ArTs/superAgents](https://github.com/AvaTar-ArTs/superAgents) supplies agent roles and governance patterns for:
 
 - orchestration;
 - verification ownership;
@@ -160,7 +160,7 @@ The ecosystem review is documented in [docs/ecosystem/AGENT_SKILL_REVIEW.md](doc
     packages/       TypeScript, npm, and MCP surfaces
     cmd/            deployable daemons
     sdk/            language SDKs
-    skills/        agent procedural guidance
+    skills/         agent procedural guidance
     agents/         AgentFileOps-specific roles, when present
     presets/        provider recipes; never credentials
     manifests/      discovery, capability, source-lock, and review contracts
