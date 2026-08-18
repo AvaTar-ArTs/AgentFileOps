@@ -14,7 +14,7 @@ def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
             "run",
             "-q",
             "-p",
-            "agentfs-cli",
+            "agent-file-ops-cli",
             "--",
             *args,
         ],
@@ -86,7 +86,7 @@ def test_absolute_path_is_normalized_without_losing_root():
     }
 
 
-def test_risk_classification_matches_agentfs_policy():
+def test_risk_classification_matches_agent_file_ops_policy():
     cases = {
         "list": "level_0",
         "checksum": "level_0",
