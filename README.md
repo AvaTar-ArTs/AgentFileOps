@@ -1,13 +1,16 @@
 # AgentFileOps
 
 <p align="center">
-  <img src="docs/assets/generated/agentfileops-hero.png" alt="An AI agent sending structured file operations through a guarded AgentFileOps gateway to remote systems" width="100%">
+  <img src="docs/assets/generated/agentfileops-protocol-hero.png" alt="Agent intent enters a pre-flight review gate, travels over SSH/SFTP, and produces an approved or blocked remote filesystem result with an audit record" width="100%">
 </p>
 
 <p align="center">
   <strong>Give agents files, not a shell.</strong><br>
-  Safe, semantic remote filesystem operations for AI agents and MCP clients<br>
-  <em>Safe Remote Filesystem, SSH/SFTP, Sync &amp; Deployment Operations for AI Agents</em>
+  Safe remote filesystem operations for AI agents and MCP clients
+</p>
+
+<p align="center">
+  <em>SSH/SFTP · transfer · sync · deployment · approvals · audit trails</em>
 </p>
 
 <p align="center">
@@ -18,7 +21,7 @@
 </p>
 
 > [!WARNING]
-> AgentFileOps is under active development. The protocol, safety model, and first Rust conformance slices are being built now. Planned package names, CLI examples, and future SSH/SFTP runtime work are not released production features.
+> AgentFileOps is under active development. The foundation contracts and first Rust conformance slice exist; broader SSH/SFTP runtime, SDK, MCP, package, and production-readiness claims remain in progress.
 
 **Category:** Remote File Operations for AI Agents.
 
@@ -37,44 +40,23 @@ flowchart TD
     E --> F[Verified result and audit]
 ```
 
-This gives agents structured filesystem capabilities—list, stat, find, read, write, transfer, manage, archive, and sync—without exposing a public arbitrary `exec(command)` surface.
+The protocol is canonical. Rust, CLI, MCP, SDK, daemon, and skills surfaces are replaceable implementations or adapters.
 
-### Capability map
+## What it covers
 
-| Surface | Purpose |
+| Capability | Purpose |
 |---|---|
-| [Protocol schemas](protocol/) | Canonical operation contracts |
-| [Rust core](crates/agent-file-ops-core/) | Path, risk, connection, and strategy logic |
-| [Skills](skills/) | Agent-facing procedural guidance |
-| [Conformance tests](tests/conformance/) | Behavioral evidence |
-| [SSH/SFTP layer](crates/agent-file-ops-ssh/) | Transport implementation surface |
-| [Dashboard](docs/site/index.html) | Current evidence posture |
+| Remote filesystem | list, stat, find, read, write, and manage files |
+| Transfer | bounded uploads, downloads, checksums, and artifact movement |
+| Deployment | planned publication, target snapshots, approvals, and rollback intent |
+| Sync | manifest-driven reconciliation with conflict and deletion controls |
+| Safety | L0–L4 risk classification, preflight plans, fingerprints, and revalidation |
+| Transport | provider-neutral SSH/SFTP connection and backend strategy |
+| Audit | normalized results and decision records for reviewable operations |
 
-## What it is for
+No public AgentFileOps interface should expose arbitrary `exec(command: string)`.
 
-![Provider-neutral destinations](docs/assets/generated/agentfileops-use-cases.png)
-
-Use the [visual legend](docs/assets/use-case-legend.svg) beside this image when explaining the blue input path, green approved paths, and amber review-required branch.
-
-AgentFileOps is designed for:
-
-- AI agents and MCP clients that need bounded remote file access;
-- coding assistants and automation systems that publish artifacts;
-- deployment workflows targeting VPS, NAS, shared hosting, and generic SSH/SFTP servers;
-- operators who need plans, approvals, fingerprints, and audit events around mutations.
-
-The protocol is provider-neutral. Hostinger is a research and migration source, not the product boundary.
-
-
-## How the guard works
-
-The product-specific visual below shows the intended semantic boundary: an operation packet enters pre-flight, passes through review policy, travels over SSH/SFTP, and produces either an approved filesystem result or a blocked mutation with an audit record.
-
-![AgentFileOps protocol, pre-flight, SSH/SFTP, and audit flow](docs/assets/generated/agentfileops-protocol-hero.png)
-
-## Safety is part of the operation
-
-Every operation receives a semantic risk level:
+## Safety model
 
 | Level | Meaning | Examples | Control |
 |---|---|---|---|
@@ -84,60 +66,42 @@ Every operation receives a semantic risk level:
 | L3 | Destructive | single delete | Explicit approval |
 | L4 | High impact | recursive delete, bulk delete, sync with deletion | Staged approval |
 
-Core boundaries:
+Safety boundaries:
 
 - credentials are references, never embedded secrets;
 - unknown or mismatched SSH host keys fail closed;
 - recursive operations default to `follow_symlinks=false`;
 - high-risk mutations require a plan, target resolution, and revalidation;
-- behavior must be proven by tests or CI evidence, not documentation alone.
+- a successful document or test placeholder is not proof of runtime completeness.
 
-## Current status
+## Current state
 
 ### Foundation implemented
 
-- canonical schemas for connections, paths, operations, plans, results, and audit events;
-- Rust workspace and core path/risk contracts;
-- discovery, naming, and source-provenance manifests;
-- foundation validation and Vertical Slice 01 fixtures;
-- architecture, security, design, and audit documentation;
-- Pages dashboard and generated visual campaign assets.
+- canonical protocol schemas and path/risk contracts;
+- Rust workspace and foundation CLI surface;
+- discovery, source-lock, capability, and skill manifests;
+- foundation and skill validators;
+- Vertical Slice 01 behavioral tests;
+- architecture, security, audit, design, and visual documentation.
 
 ### In progress
 
 - connection and backend-strategy conformance;
-- real SSH/SFTP transport;
+- real SSH/SFTP transport behavior;
 - strict host-key verification implementation;
 - bounded remote reads and additive writes;
-- ephemeral OpenSSH/SFTP integration fixtures;
-- MCP and SDK adapter surfaces.
+- integration fixtures;
+- MCP and SDK adapters.
 
-### Not released yet
+### Not released
 
 - published npm, Python, Go, or Docker packages;
 - a stable public CLI distribution;
 - destructive delete, archive, and sync runtime behavior;
 - production-readiness certification.
 
-## Planned distribution surfaces
-
-These names are reserved product-direction targets. They are not claims that public packages, images, or skill listings are already published.
-
-| Surface | Planned identifier | Status |
-|---|---|---|
-| Rust core | `agent-file-ops-core` | Foundation implemented |
-| Rust CLI | `agent-file-ops-cli` / `afo` | Foundation / staged |
-| SSH/SFTP runtime | AgentFileOps SSH transport | In progress |
-| MCP gateway | `@avatar-arts/agent-file-ops-mcp` | Planned |
-| Python SDK | `agent-file-ops` | Staged / not published |
-| Go daemon | `agent-file-ops-go` | Staged / not published |
-| npm packages | `@avatar-arts/agent-file-ops-*` | Not published |
-| Docker image | `ghcr.io/avatar-arts/agent-file-ops` | Not published |
-| skills.sh entries | `remote-file-operations` and related names | Catalog targets |
-
-The [discovery manifest](manifests/discovery.json) is the machine-readable source for naming, keywords, and reserved distribution identifiers.
-
-## Try the repository
+## Verify the repository
 
 ```bash
 git clone https://github.com/AvaTar-ArTs/AgentFileOps.git
@@ -145,49 +109,41 @@ cd AgentFileOps
 
 python scripts/validate_foundation.py
 python scripts/validate_skills.py
+python scripts/validate_source_lock.py
+python scripts/validate_repository_assets.py
+
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-targets
-python -m pytest tests/conformance/test_vertical_slice_01.py -v
+
+python -m pip install --upgrade pytest
+python -m pytest tests/conformance/test_vertical_slice_01.py \
+  tests/conformance/test_vertical_slice_02.py \
+  tests/conformance/test_vertical_slice_03.py -v -ra
 ```
 
-Vertical Slices 02 and 03 are intentionally marked as incomplete contract tests. Their skips are visible evidence, not a claim of finished runtime behavior.
+Vertical Slices 02 and 03 currently contain explicit skipped placeholders. They are visible evidence of incomplete scope, not passing proof of finished runtime behavior.
 
-## Read the repository as a narrative
+## Read next
 
-Start with:
-
-1. [Repository Index](docs/REPOSITORY_INDEX.md) — evidence-based map of the project.
-2. [Examples](docs/examples/README.md) — end-to-end operation stories from read to reviewed mutation.
-3. [Architecture](ARCHITECTURE.md) — system invariants and boundaries.
-4. [Security policy](SECURITY.md) — credential, host-key, path, and execution constraints.
-5. [Foundation audit](AUDIT_REPORT.md) — what is demonstrated, what is partial, and what remains.
-6. [Discovery manifest](manifests/discovery.json) — canonical naming, package targets, and search vocabulary.
-7. [Visual gallery](docs/assets/README.md) — product imagery, typography, and campaign guidance.
-8. [Design system](docs/DESIGN_SYSTEM.md) — colors, components, layouts, and SVG references.
-9. [Dashboard](docs/site/index.html) — current evidence posture and documentation links.
-
-## Repository layout
-
-| Directory | Role |
+| Question | Document |
 |---|---|
-| [protocol/](protocol/) | Canonical schemas and examples |
-| [crates/](crates/) | Rust implementation family |
-| [packages/](packages/) | TypeScript, npm, and MCP surfaces |
-| [cmd/](cmd/) | Deployable daemons |
-| [sdk/](sdk/) | Language SDKs |
-| [skills/](skills/) | Agent procedural guidance |
-| [presets/](presets/) | Provider recipes; never credentials |
-| [manifests/](manifests/) | Discovery, capability, and source-lock contracts |
-| [docs/](docs/) | Architecture, ecosystem, verification, design, and visuals |
-| [tests/](tests/) | Conformance and integration fixtures |
-| [.github/](.github/) | CI and Pages workflows |
+| What is the canonical project map? | [Repository Index](docs/REPOSITORY_INDEX.md) |
+| What are the system boundaries? | [Architecture](ARCHITECTURE.md) |
+| What is forbidden or safety-sensitive? | [Security policy](SECURITY.md) |
+| What is actually demonstrated? | [Foundation audit](AUDIT_REPORT.md) |
+| What names and package targets are reserved? | [Discovery manifest](manifests/discovery.json) |
+| How are agent skills defined? | [Skill contracts](skills/) |
+| What are the visual assets and their authority boundaries? | [Visual gallery](docs/assets/README.md) |
+| Where is the live documentation surface? | [Pages dashboard](docs/site/index.html) |
 
-## How the agent ecosystem fits
+## Ecosystem
 
-AgentFileOps uses the AvaTar-ArTs ecosystem as a reviewed development system:
+AgentFileOps is developed with the AvaTar-ArTs agent ecosystem:
 
-- [superAgents](https://github.com/AvaTar-ArTs/superAgents) — orchestration, ownership, policy, and verification roles;
-- [superSkills](https://github.com/AvaTar-ArTs/superSkills) — procedural contracts for brainstorming, TDD, debugging, and verification;
-- [agent-skills](https://github.com/AvaTar-ArTs/agent-skills) — specialist perspectives for architecture, security, testing, DevOps, and review.
+- [superAgents](https://github.com/AvaTar-ArTs/superAgents) — orchestration, policy, and verification roles;
+- [superSkills](https://github.com/AvaTar-ArTs/superSkills) — procedural contracts for development and quality gates;
+- [agent-skills](https://github.com/AvaTar-ArTs/agent-skills) — specialist architecture, security, testing, DevOps, and review perspectives.
 
 The working rule is:
 
@@ -197,32 +153,12 @@ contract first → specialist review → implementation → verification evidenc
 
 Imported ecosystem material is adapted and bounded. The AgentFileOps protocol remains authoritative.
 
-## Contributing
+## Naming and source history
 
-Before changing protocol or implementation behavior:
+The project began as `hostinger-file-bridge`, was generalized briefly under `AgentFS`, and was renamed to AgentFileOps after collision research. The original product-design checkpoint is preserved in [the source architecture specification](docs/superpowers/specs/2026-08-18-agentfs-product-design.md).
 
-1. Read the relevant protocol and architecture documents.
-2. Identify the applicable review role and procedural skill.
-3. Write or update tests before claiming behavior.
-4. Run the narrowest relevant validator, then the broader suite.
-5. Record actual verification evidence.
-6. Keep credentials and secret material out of source, fixtures, logs, and commits.
-
-## Naming history
-
-The project began as `hostinger-file-bridge`, was generalized briefly under the working name `AgentFS`, and was renamed to **AgentFileOps** after collision research. Historical ADR and specification filenames may retain `agentfs` when they document that evolution.
-
-## Source architecture
-
-The original product-design checkpoint is preserved at [the AgentFileOps product-design specification](docs/superpowers/specs/2026-08-18-agentfs-product-design.md). New implementation and distribution identifiers use `AgentFileOps` / `agent-file-ops`.
+Hostinger remains a migration and research source, not a product boundary. The protocol is intended for generic SSH/SFTP servers, VPSes, NAS systems, hosting panels, and future adapters.
 
 ## License
 
 AgentFileOps is licensed under the [MIT License](LICENSE).
-
----
-
-<p align="center">
-  <strong>AgentFileOps</strong><br>
-  Safe remote filesystem operations for AI agents and MCP clients
-</p>
