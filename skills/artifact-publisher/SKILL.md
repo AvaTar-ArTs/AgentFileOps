@@ -50,3 +50,7 @@ Each target has its own resolved path, capability check, risk, approval, and res
 ## Failure behavior
 
 Stop on nondeterministic packaging, digest mismatch, target conflict, unsupported capability, expired approval, or partial publication. Report successful and failed targets separately and preserve retry/rollback information.
+
+## Verification
+
+Verify the local digest, remote digest, target metadata, per-target publication result, and retention decision. A multi-target publication is complete only when every intended target has an explicit result.
