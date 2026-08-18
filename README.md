@@ -125,6 +125,16 @@ python -m pytest tests/conformance/test_vertical_slice_01.py \
 
 Vertical Slice 02 is implemented as a semantic, no-network conformance slice. Vertical Slice 03 remains an explicit skipped placeholder until live SSH/SFTP operations and integration fixtures are available.
 
+## Build the supported CLI package
+
+The current release boundary is the verified `afo` policy/conformance CLI. It can be packaged for the current platform with:
+
+```bash
+python scripts/package_cli.py
+```
+
+The resulting archive is a small binary package containing `afo`, protocol schemas, security policy, and verification records. See [release scope](RELEASE_SCOPE.md) for the exact production boundary. Live SSH/SFTP and future MCP/SDK/daemon adapters remain experimental.
+
 ## Read next
 
 | Question | Document |
