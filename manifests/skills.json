@@ -1,48 +1,48 @@
 {
   "version": 1,
-  "catalog": "AgentFS",
+  "catalog": "AgentFileOps",
   "skills": [
     {
-      "id": "agentfs.remote-filesystem",
+      "id": "agentfileops.remote-filesystem",
       "name": "Remote Filesystem Operator",
-      "description": "Safely inspect and operate on remote filesystems through AgentFS semantic tools instead of arbitrary shell commands.",
-      "tags": ["agentfs", "filesystem", "ssh", "sftp", "operations"],
+      "description": "Safely inspect and operate on remote filesystems through AgentFileOps semantic tools instead of arbitrary shell commands.",
+      "tags": ["agentfileops", "remote-filesystem", "ssh", "sftp", "file-operations"],
       "capabilities": ["remote-filesystem", "safe-file-ops", "path-selection", "verification"],
       "risk": "medium",
       "status": "foundation"
     },
     {
-      "id": "agentfs.safe-remote-deploy",
+      "id": "agentfileops.safe-remote-deploy",
       "name": "Safe Remote Deploy",
-      "description": "Plan, transfer, verify, archive, and activate deployable artifacts on remote systems using AgentFS preflight and integrity checks.",
-      "tags": ["agentfs", "deploy", "release", "artifact"],
+      "description": "Plan, transfer, verify, archive, and activate deployable artifacts on remote systems using AgentFileOps preflight and integrity checks.",
+      "tags": ["agentfileops", "remote-deploy", "release", "artifact-publishing"],
       "capabilities": ["artifact-deploy", "transfer-integrity", "deployment-preflight"],
       "risk": "high",
       "status": "planned"
     },
     {
-      "id": "agentfs.remote-sync",
+      "id": "agentfileops.remote-sync",
       "name": "Remote Sync",
       "description": "Plan and execute differential filesystem synchronization while treating deletion as high-impact work.",
-      "tags": ["agentfs", "sync", "backup", "migration"],
+      "tags": ["agentfileops", "remote-sync", "backup", "migration"],
       "capabilities": ["manifest-diff", "remote-sync", "delete-preflight"],
       "risk": "high",
       "status": "planned"
     },
     {
-      "id": "agentfs.artifact-publisher",
+      "id": "agentfileops.artifact-publisher",
       "name": "Artifact Publisher",
       "description": "Publish build or creative artifacts to configured remote targets and verify final placement, size, and checksum.",
-      "tags": ["agentfs", "publish", "artifact", "release"],
+      "tags": ["agentfileops", "publish", "artifact", "release"],
       "capabilities": ["artifact-publishing", "checksum-verification", "remote-placement"],
       "risk": "medium",
       "status": "planned"
     },
     {
-      "id": "agentfs.protocol-conformance",
-      "name": "AgentFS Protocol Conformance",
-      "description": "Preserve one canonical AgentFS behavior across Rust, TypeScript, Go, Python, MCP, CLI, and provider renderings using shared fixtures and parity tests.",
-      "tags": ["agentfs", "protocol", "conformance", "testing"],
+      "id": "agentfileops.protocol-conformance",
+      "name": "AgentFileOps Protocol Conformance",
+      "description": "Preserve one canonical AgentFileOps behavior across Rust, TypeScript, Go, Python, MCP, CLI, and provider renderings using shared fixtures and parity tests.",
+      "tags": ["agentfileops", "protocol", "conformance", "testing"],
       "capabilities": ["contract-testing", "parity", "drift-detection"],
       "risk": "low",
       "status": "foundation"
