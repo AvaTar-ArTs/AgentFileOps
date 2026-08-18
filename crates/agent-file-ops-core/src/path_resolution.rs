@@ -12,9 +12,16 @@ pub struct ResolvedPath {
 }
 
 fn join_root(root: &str, relative: &str) -> String {
-    let root = root.trim_end_matches('/');
     let relative = relative.trim_start_matches('/');
 
+    if root == "/" {
+        if relative.is_empty() {
+            return "/".to_string();
+        }
+        return format!("/{relative}");
+    }
+
+    let root = root.trim_end_matches('/');
     if root.is_empty() || root == "." {
         return relative.to_string();
     }
@@ -123,6 +130,12 @@ mod tests {
             value.shell_path.as_deref(),
             Some("/home/u1/domains/example.com/public_html/releases/app.zip")
         );
+    }
+
+    #[test]
+    fn preserves_filesystem_root_when_joining() {
+        assert_eq!(join_root("/", "var/www/app"), "/var/www/app");
+        assert_eq!(join_root("/", ""), "/");
     }
 
     #[test]
