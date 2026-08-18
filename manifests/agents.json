@@ -2,17 +2,17 @@
   "version": 1,
   "agents": [
     {
-      "id": "agentfs.orchestrator",
-      "name": "AgentFS Orchestrator",
-      "description": "Map work to canonical AgentFS capabilities, select implementation surfaces, apply approval boundaries, and coordinate cross-language execution.",
+      "id": "agentfileops.orchestrator",
+      "name": "AgentFileOps Orchestrator",
+      "description": "Map work to canonical AgentFileOps capabilities, select implementation surfaces, apply approval boundaries, and coordinate cross-language execution.",
       "inherits": ["superagents.orchestrator", "agent-skills:workflow-orchestrator"],
       "capabilities": ["intent-routing", "surface-selection", "execution-planning", "cross-language-coordination"],
-      "skills": ["process.brainstorming", "process.verification", "agentfs.protocol-conformance"],
+      "skills": ["process.brainstorming", "process.verification", "agentfileops.protocol-conformance"],
       "approval": "approval_required"
     },
     {
-      "id": "agentfs.protocol-architect",
-      "name": "AgentFS Protocol Architect",
+      "id": "agentfileops.protocol-architect",
+      "name": "AgentFileOps Protocol Architect",
       "description": "Protect protocol-first boundaries and prevent Rust, TypeScript, Go, Python, MCP, CLI, or provider presets from redefining canonical semantics.",
       "inherits": ["agent-skills:system-architect", "agent-skills:capability-atlas"],
       "capabilities": ["protocol-design", "architecture-review", "capability-parity", "adr-review"],
@@ -20,8 +20,8 @@
       "approval": "advisory"
     },
     {
-      "id": "agentfs.security-reviewer",
-      "name": "AgentFS Security Reviewer",
+      "id": "agentfileops.security-reviewer",
+      "name": "AgentFileOps Security Reviewer",
       "description": "Review authentication, path handling, destructive mutations, symlinks, archives, transfers, redaction, and audit behavior using defense-in-depth principles.",
       "inherits": ["agent-skills:security-engineer"],
       "capabilities": ["threat-modeling", "security-review", "secret-boundary-review", "destructive-operation-review"],
@@ -29,8 +29,8 @@
       "approval": "advisory"
     },
     {
-      "id": "agentfs.conformance-verifier",
-      "name": "AgentFS Conformance Verifier",
+      "id": "agentfileops.conformance-verifier",
+      "name": "AgentFileOps Conformance Verifier",
       "description": "Verify protocol fixtures, cross-surface parity, test evidence, and release claims without overstating completion.",
       "inherits": ["superagents.verifier", "agent-skills:testing-specialist", "agent-skills:code-reviewer"],
       "capabilities": ["contract-testing", "conformance", "plan-alignment-review", "release-verification"],
