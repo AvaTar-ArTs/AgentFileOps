@@ -145,6 +145,8 @@ The commands above are verification entry points for the current repository. The
 
 ## Documentation
 
+For a complete evidence-based tree and ownership map, see [Repository Index](docs/REPOSITORY_INDEX.md).
+
 | Need | Start here |
 |---|---|
 | Understand the architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
@@ -200,7 +202,7 @@ Start with [AUDIT_REPORT.md](AUDIT_REPORT.md), [SECURITY.md](SECURITY.md), and t
 
 ## License
 
-License selection is currently deferred. Do not assume redistribution rights until a license file and licensing policy are published.
+AgentFileOps is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Naming history
 
