@@ -2,7 +2,7 @@
   "version": 1,
   "skills": [
     {
-      "id": "agentfileops.remote-filesystem",
+      "id": "agentfileops.remote-file-operations",
       "name": "AgentFileOps Remote Filesystem",
       "description": "Implements semantic remote filesystem operations: list, stat, find, read, write, transfer.",
       "path": "skills/remote-file-operations/SKILL.md",
