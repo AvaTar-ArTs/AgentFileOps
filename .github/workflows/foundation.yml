@@ -4,12 +4,18 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: foundation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-foundation:
+    name: Validate repository contracts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,21 +26,26 @@ jobs:
         run: python scripts/validate_foundation.py
       - name: Validate AgentFileOps skill contracts
         run: python scripts/validate_skills.py
+      - name: Validate pinned ecosystem sources
+        run: python scripts/validate_source_lock.py
+      - name: Validate documentation and visual assets
+        run: python scripts/validate_repository_assets.py
 
-  source-lock-review:
+  rust-quality:
+    name: Rust format and lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Display pinned ecosystem sources
-        run: python - <<'PY'
-          import json
-          from pathlib import Path
-          data=json.loads(Path('manifests/source-lock.json').read_text())
-          for source in data['sources']:
-              print(source['id'], source.get('repository'), source.get('commit','unversioned'))
-          PY
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Check Rust formatting
+        run: cargo fmt --all -- --check
+      - name: Run Clippy with warnings denied
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
 
   conformance:
+    name: Rust and black-box conformance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,4 +58,11 @@ jobs:
       - name: Install Python test dependencies
         run: python -m pip install --upgrade pytest
       - name: Run black-box AgentFileOps conformance tests
-        run: python -m pytest tests/conformance/test_vertical_slice_01.py tests/conformance/test_vertical_slice_02.py tests/conformance/test_vertical_slice_03.py -v
+        run: python -m pytest tests/conformance/test_vertical_slice_01.py tests/conformance/test_vertical_slice_02.py tests/conformance/test_vertical_slice_03.py -v -ra --junitxml=pytest-results.xml
+      - name: Upload conformance report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentfileops-conformance-report
+          path: pytest-results.xml
+          if-no-files-found: warn
