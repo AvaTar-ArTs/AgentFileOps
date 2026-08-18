@@ -58,15 +58,36 @@ def main() -> int:
     agents = load_json("manifests/agents.json")
     agent_ids = {entry["id"] for entry in agents["agents"]}
     for expected in {
-        "agentfs.orchestrator",
-        "agentfs.protocol-architect",
-        "agentfs.security-reviewer",
-        "agentfs.conformance-verifier",
+        "agentfileops.orchestrator",
+        "agentfileops.protocol-architect",
+        "agentfileops.security-reviewer",
+        "agentfileops.conformance-verifier",
     }:
         if expected not in agent_ids:
-            raise SystemExit(f"missing AgentFS agent: {expected}")
+            raise SystemExit(f"missing AgentFileOps agent: {expected}")
 
-    print("AgentFS foundation validation: PASS")
+    skills = load_json("manifests/skills.json")
+    skill_ids = {entry["id"] for entry in skills["skills"]}
+    for expected in {
+        "agentfileops.remote-filesystem",
+        "agentfileops.protocol-conformance",
+    }:
+        if expected not in skill_ids:
+            raise SystemExit(f"missing AgentFileOps skill: {expected}")
+
+    for active_doc in [
+        "ARCHITECTURE.md",
+        "SECURITY.md",
+        "protocol/README.md",
+        "skills/remote-filesystem/SKILL.md",
+        "skills/protocol-conformance/SKILL.md",
+        "packages/README.md",
+    ]:
+        text = (ROOT / active_doc).read_text(encoding="utf-8")
+        if "AgentFS" in text:
+            raise SystemExit(f"retired AgentFS name found in active surface: {active_doc}")
+
+    print("AgentFileOps foundation validation: PASS")
     return 0
 
 
