@@ -43,4 +43,4 @@ jobs:
       - name: Run Rust workspace tests
         run: cargo test --workspace --all-targets
       - name: Run black-box AgentFileOps conformance tests
-        run: python -m pytest tests/conformance/test_vertical_slice_01.py tests/conformance/test_vertical_slice_02.py -v
+        run: python -m pytest tests/conformance/test_vertical_slice_01.py tests/conformance/test_vertical_slice_02.py tests/conformance/test_vertical_slice_03.py -v
