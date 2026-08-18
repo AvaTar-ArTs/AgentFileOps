@@ -1,10 +1,12 @@
 mod config;
 mod credentials;
 mod host_key;
+mod session;
 
 pub use config::{SshTransportConfig, MAX_INLINE_READ_BYTES};
 pub use credentials::CredentialRef;
 pub use host_key::StrictHostKeyVerifier;
+pub use session::AgentFileOpsSshSession;
 
 use thiserror::Error;
 
@@ -32,6 +34,12 @@ pub enum TransportError {
         port: u16,
         message: String,
     },
+
+    #[error("SSH agent is unavailable: {0}")]
+    AgentUnavailable(String),
+
+    #[error("SSH key could not be loaded: {0}")]
+    KeyLoadFailed(String),
 
     #[error("SSH authentication failed")]
     AuthenticationFailed,
