@@ -1,8 +1,8 @@
-# AgentFS Conformance Suite
+# AgentFileOps Conformance Suite
 
-Shared conformance fixtures are the executable parity layer across AgentFS implementations.
+Shared conformance fixtures are the executable parity layer across AgentFileOps implementations.
 
-Every implementation claiming AgentFS compatibility should consume the same canonical fixtures for:
+Every implementation claiming AgentFileOps compatibility should consume the same canonical fixtures for:
 
 - path normalization and explicit absolute mode;
 - alias behavior;
