@@ -12,8 +12,36 @@
     "host": {"type": "string"},
     "port": {"type": "integer", "minimum": 1, "maximum": 65535},
     "username": {"type": "string"},
-    "aliases": {"type": "object", "additionalProperties": {"type": "string"}},
-    "capabilities": {"type": "object", "additionalProperties": true},
+    "home": {
+      "type": "string",
+      "description": "Logical account/home identity when known."
+    },
+    "sftp_home": {
+      "type": "string",
+      "description": "Path representing account home in the SFTP namespace; may be '.' for a chroot-like namespace."
+    },
+    "shell_home": {
+      "type": ["string", "null"],
+      "description": "Path representing account home in the shell namespace when shell access and safe mapping exist."
+    },
+    "aliases": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Named location bookmarks relative to the connection home unless explicitly modeled otherwise."
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sftp": {"type": "boolean", "default": false},
+        "shell": {"type": "boolean", "default": false},
+        "commands": {
+          "type": "object",
+          "additionalProperties": {"type": "boolean"},
+          "description": "Conservatively detected fixed shell-command capabilities such as cp, mv, or sha256sum."
+        }
+      }
+    },
     "credential_ref": {
       "type": "string",
       "description": "Reference to secret material; raw credentials are not allowed in the protocol object."
