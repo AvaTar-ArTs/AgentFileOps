@@ -9,7 +9,7 @@
       "source": "superskills"
     },
     {
-      "id": "agentfileops.safe-remote-deploy",
+      "id": "agentfileops.remote-deploy",
       "name": "AgentFileOps Safe Remote Deploy",
       "description": "Remote deployment operations with risk classification, preflight plans, and target snapshots.",
       "path": "skills/remote-deploy/SKILL.md",
