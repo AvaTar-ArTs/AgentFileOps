@@ -1,7 +1,7 @@
 [workspace]
 members = [
-  "crates/agentfs-core",
-  "crates/agentfs-cli",
+  "crates/agent-file-ops-core",
+  "crates/agent-file-ops-cli",
 ]
 resolver = "2"
 
@@ -9,7 +9,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/AvaTar-ArTs/AgentFS"
+repository = "https://github.com/AvaTar-ArTs/AgentFileOps"
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
