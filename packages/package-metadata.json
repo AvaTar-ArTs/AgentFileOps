@@ -1,0 +1,50 @@
+{
+  "source": "../manifests/discovery.json",
+  "note": "Canonical planned npm metadata. Copy/generate into real package.json files only when each package implementation is publishable.",
+  "packages": [
+    {
+      "name": "@avatar-arts/agent-file-ops",
+      "role": "npx/bootstrap and user-facing Node entry",
+      "description": "Safety-first remote filesystem operations for AI agents and MCP clients over SSH/SFTP without arbitrary shell access."
+    },
+    {
+      "name": "@avatar-arts/agent-file-ops-mcp",
+      "role": "MCP gateway",
+      "description": "MCP server for safe remote filesystem, SSH/SFTP file transfer, sync, archive, and deployment operations for AI agents."
+    },
+    {
+      "name": "@avatar-arts/agent-file-ops-client",
+      "role": "TypeScript client SDK",
+      "description": "Typed AgentFileOps client for remote filesystem operations, transfers, sync, deployment, approvals, and audit-aware workflows."
+    },
+    {
+      "name": "@avatar-arts/agent-file-ops-schema",
+      "role": "canonical TypeScript schema bindings",
+      "description": "AgentFileOps protocol schemas and types for safe remote file operations across MCP, CLI, SDK, and daemon surfaces."
+    }
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-agent",
+    "agents",
+    "remote-filesystem",
+    "filesystem",
+    "filesystem-mcp",
+    "ssh",
+    "sftp",
+    "file-transfer",
+    "remote-server",
+    "remote-file-operations",
+    "server-file-management",
+    "sync",
+    "remote-sync",
+    "deployment",
+    "remote-deploy",
+    "devops",
+    "automation",
+    "secure-filesystem",
+    "agent-tools",
+    "artifact-publishing"
+  ]
+}
