@@ -1,12 +1,12 @@
-# AgentFS Security Policy
+# AgentFileOps Security Policy
 
-AgentFS is security-sensitive infrastructure because it mediates remote filesystem access for agents and automation.
+AgentFileOps is security-sensitive infrastructure because it mediates remote filesystem access for agents and automation.
 
 ## Core invariant
 
 **Structured filesystem capabilities instead of arbitrary shell execution.**
 
-No public AgentFS protocol, MCP tool, CLI passthrough, SDK method, or provider preset should expose unrestricted `exec(command)` behavior.
+No public AgentFileOps protocol, MCP tool, CLI passthrough, SDK method, or provider preset should expose unrestricted `exec(command)` behavior.
 
 ## Required controls
 
@@ -40,13 +40,17 @@ Never commit or log:
 
 Backends may use SSH shell commands internally only when:
 
-1. the operation already exists as a canonical AgentFS semantic operation;
+1. the operation already exists as a canonical AgentFileOps semantic operation;
 2. capability is positively detected;
 3. backend path mapping is proven safe;
 4. the command is a fixed template with separately validated/quoted arguments;
-5. the result preserves AgentFS safety and normalized-result semantics.
+5. the result preserves AgentFileOps safety and normalized-result semantics.
 
 Otherwise, fall back to a portable filesystem strategy.
+
+## Naming hygiene
+
+Security docs, public APIs, packages, skills, agents, audit records, and active configuration use AgentFileOps identifiers. The retired AgentFS name may remain only in historical migration or naming records.
 
 ## Reporting vulnerabilities
 
