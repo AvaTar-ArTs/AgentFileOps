@@ -1,21 +1,21 @@
-# AgentFS
+# AgentFileOps
 
 > **Give agents files, not a shell.**
 
-AgentFS is a provider- and language-agnostic remote filesystem control plane for AI agents, coding assistants, automation systems, and human operators. It exposes structured filesystem capabilities instead of arbitrary shell execution.
+AgentFileOps is a provider- and language-agnostic remote filesystem operations layer for AI agents, coding assistants, automation systems, and human operators. It exposes structured remote file capabilities instead of arbitrary shell execution.
 
-## What AgentFS is
+## What AgentFileOps is
 
-AgentFS defines a protocol, schemas, safety model, capability model, conformance suite, and multiple implementation surfaces.
+AgentFileOps defines a protocol, schemas, safety model, capability model, conformance suite, and multiple implementation surfaces.
 
 ```text
-AgentFS Protocol
+AgentFileOps Protocol
       |
       +-- Rust core engine
       +-- TypeScript MCP / npm gateway
       +-- Go daemon
       +-- Python SDK
-      +-- CLI
+      +-- CLI (`afo`)
       +-- Agent Skills
       +-- provider presets
 ```
@@ -37,11 +37,11 @@ archive
 sync
 ```
 
-No public AgentFS interface should expose `exec(command: string)`.
+No public AgentFileOps interface should expose `exec(command: string)`.
 
 ## Safety model
 
-AgentFS classifies operations by semantic risk:
+AgentFileOps classifies operations by semantic risk:
 
 - L0 read-only: list, stat, find, read, checksum
 - L1 additive: mkdir, upload new file, copy to new path
@@ -53,7 +53,7 @@ High-risk mutations use preflight plans, target snapshots, expirations, and fing
 
 ## Ecosystem-driven development
 
-AgentFS is developed using the AvaTar-ArTs agent ecosystem:
+AgentFileOps is developed using the AvaTar-ArTs agent ecosystem:
 
 - **superAgents** provides orchestration, policy boundaries, catalog locking, and verification roles.
 - **superSkills** provides curated procedural contracts such as brainstorming, TDD, verification, MCP development, catalog synchronization, and changelog discipline.
@@ -70,7 +70,7 @@ packages/      TypeScript / npm / MCP surfaces
 cmd/           deployable daemons
 sdk/           language SDKs
 skills/        skills.sh / agent procedural guidance
-agents/        AgentFS-specific review and orchestration roles
+agents/        AgentFileOps-specific review and orchestration roles
 presets/       provider recipes, never credentials
 manifests/     source locks, capability and review contracts
 docs/          architecture, ecosystem, security, migration
@@ -79,17 +79,27 @@ tests/         shared conformance and integration fixtures
 
 ## Provider neutrality
 
-Hostinger is a preset and migration source, not a product boundary. The same AgentFS protocol should work with generic SSH/SFTP servers, VPSes, NAS systems, cPanel/Plesk hosts, and future adapters.
+Hostinger is a preset and migration source, not a product boundary. The same AgentFileOps protocol should work with generic SSH/SFTP servers, VPSes, NAS systems, cPanel/Plesk hosts, and future adapters.
+
+## Search / discovery terms
+
+AgentFileOps is designed around the remote-file operations people actually need from agents: **remote filesystem**, **SSH**, **SFTP**, **file transfer**, **remote server**, **sync**, **deployment**, **archives**, **artifact publishing**, **MCP**, and **AI agent automation**.
 
 ## Current status
 
-**Foundation / protocol design.** The product architecture is approved. Runtime implementations are not yet production-ready and must not be represented as complete until conformance and verification evidence exist.
+**Foundation + first Rust conformance slice.** The product architecture is approved, the canonical path/risk contracts are implemented in Rust, and broader SSH/SFTP runtime work remains under active development. Production readiness must only be claimed after conformance, integration, and security verification evidence exists.
+
+## Naming history
+
+The project began as `hostinger-file-bridge`, was generalized briefly under the working name `AgentFS`, and was renamed to **AgentFileOps** after collision research found existing AgentFS projects. Historical ADR/spec filenames may retain `agentfs` where they document that evolution.
 
 ## Source architecture
 
-The product design is in:
+The original product-design checkpoint is preserved at:
 
 `docs/superpowers/specs/2026-08-18-agentfs-product-design.md`
+
+New implementation and distribution identifiers use `AgentFileOps` / `agent-file-ops`.
 
 ## License
 
