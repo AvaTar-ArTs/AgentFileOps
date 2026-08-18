@@ -1,18 +1,22 @@
 {
-  "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://agentfs.dev/schema/0.1/connection.schema.json",
-  "title":"AgentFS Connection Descriptor",
-  "type":"object",
-  "additionalProperties":false,
-  "required":["id","backend"],
-  "properties":{
-    "id":{"type":"string","minLength":1},
-    "backend":{"enum":["ssh","local","rclone","webdav","smb","s3-compatible"]},
-    "host":{"type":"string"},
-    "port":{"type":"integer","minimum":1,"maximum":65535},
-    "username":{"type":"string"},
-    "aliases":{"type":"object","additionalProperties":{"type":"string"}},
-    "capabilities":{"type":"object","additionalProperties":true},
-    "credential_ref":{"type":"string","description":"Reference to secret material; raw credentials are not allowed in the protocol object."}
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/connection.schema.json",
+  "title": "AgentFileOps Connection Descriptor",
+  "description": "Canonical connection metadata for AgentFileOps remote file operations. Credentials are referenced, never embedded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "backend"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "backend": {"enum": ["ssh", "local", "rclone", "webdav", "smb", "s3-compatible"]},
+    "host": {"type": "string"},
+    "port": {"type": "integer", "minimum": 1, "maximum": 65535},
+    "username": {"type": "string"},
+    "aliases": {"type": "object", "additionalProperties": {"type": "string"}},
+    "capabilities": {"type": "object", "additionalProperties": true},
+    "credential_ref": {
+      "type": "string",
+      "description": "Reference to secret material; raw credentials are not allowed in the protocol object."
+    }
   }
 }
