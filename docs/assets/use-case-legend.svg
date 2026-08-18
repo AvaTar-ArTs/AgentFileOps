@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="250" viewBox="0 0 1180 250" role="img" aria-labelledby="title desc">
+  <title id="title">AgentFileOps use-case visual legend</title>
+  <desc id="desc">Blue indicates agent intent and operation packets. Green indicates approved additive paths. Amber indicates review-required changes. Red indicates blocked high-risk mutations.</desc>
+  <rect width="1180" height="250" rx="18" fill="#0F1E37"/>
+  <text x="42" y="48" fill="#FFFFFF" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="700">How to read the use-case visual</text>
+  <g font-family="Inter,Arial,sans-serif" font-size="19">
+    <rect x="42" y="82" width="250" height="112" rx="14" fill="#12294A" stroke="#00C8FF" stroke-width="3"/>
+    <circle cx="78" cy="119" r="14" fill="#00C8FF"/>
+    <text x="108" y="126" fill="#FFFFFF" font-weight="700">Blue · intent</text>
+    <text x="62" y="158" fill="#C9D7E6" font-size="16">Agent request and</text>
+    <text x="62" y="181" fill="#C9D7E6" font-size="16">semantic operation packet</text>
+
+    <rect x="326" y="82" width="250" height="112" rx="14" fill="#102D25" stroke="#108040" stroke-width="3"/>
+    <circle cx="362" cy="119" r="14" fill="#108040"/>
+    <text x="392" y="126" fill="#FFFFFF" font-weight="700">Green · approved</text>
+    <text x="346" y="158" fill="#C9D7E6" font-size="16">Policy-approved path</text>
+    <text x="346" y="181" fill="#C9D7E6" font-size="16">to a resolved target</text>
+
+    <rect x="610" y="82" width="250" height="112" rx="14" fill="#332A12" stroke="#FFB400" stroke-width="3"/>
+    <circle cx="646" cy="119" r="14" fill="#FFB400"/>
+    <text x="676" y="126" fill="#FFFFFF" font-weight="700">Amber · review</text>
+    <text x="630" y="158" fill="#C9D7E6" font-size="16">Mutation requiring</text>
+    <text x="630" y="181" fill="#C9D7E6" font-size="16">human or policy approval</text>
+
+    <rect x="894" y="82" width="244" height="112" rx="14" fill="#351821" stroke="#DC3545" stroke-width="3"/>
+    <circle cx="930" cy="119" r="14" fill="#DC3545"/>
+    <text x="960" y="126" fill="#FFFFFF" font-weight="700">Red · blocked</text>
+    <text x="914" y="158" fill="#C9D7E6" font-size="16">Rejected target or</text>
+    <text x="914" y="181" fill="#C9D7E6" font-size="16">unsafe destructive path</text>
+  </g>
+</svg>
