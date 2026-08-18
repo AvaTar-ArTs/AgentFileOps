@@ -55,3 +55,7 @@ Add slice-specific commands only when the slice contains real assertions.
 ## Failure behavior
 
 Stop on schema drift, missing fixture fields, inconsistent error mapping, accidental secret exposure, or a green suite with no meaningful assertions. Report the smallest reproducible case.
+
+## Verification
+
+Run the foundation validator, the narrowest real conformance slice, and the full workspace suite. Report passed, failed, and skipped tests separately; skipped placeholders are not conformance evidence.
