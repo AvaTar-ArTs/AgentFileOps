@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/ssh-transport.schema.json",
+  "title": "AgentFileOps SSH Transport Configuration",
+  "description": "Canonical SSH/SFTP transport policy for AgentFileOps. Secret material is referenced, never embedded in protocol operations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "known_hosts_ref",
+    "credential_ref"
+  ],
+  "properties": {
+    "known_hosts_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference or mounted path to trusted known_hosts material. Unknown and mismatched keys fail closed."
+    },
+    "credential_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to an SSH agent or mounted secret-backed credential source. Raw credentials are not allowed."
+    },
+    "connect_timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 120,
+      "default": 20
+    },
+    "operation_timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 600,
+      "default": 60
+    },
+    "inline_read_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 16777216,
+      "default": 1048576,
+      "description": "Maximum bytes returned by bounded inline reads before the operation fails with a read-limit error."
+    }
+  }
+}
