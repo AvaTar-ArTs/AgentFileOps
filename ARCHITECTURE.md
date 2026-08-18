@@ -1,9 +1,9 @@
-# AgentFS Architecture
+# AgentFileOps Architecture
 
 ## Invariant
 
 ```text
-AgentFS Protocol != Rust Core != MCP Gateway != Daemon != SDKs != Skills != Provider Presets
+AgentFileOps Protocol != Rust Core != MCP Gateway != Daemon != SDKs != Skills != Provider Presets
 ```
 
 The protocol owns behavior. Every other component renders or implements that behavior.
@@ -18,25 +18,25 @@ Rust native engine family. Owns high-performance reference implementation mechan
 
 Planned crates:
 
-- `agentfs-core`
-- `agentfs-ssh`
-- `agentfs-archive`
-- `agentfs-sync`
-- `agentfs-cli`
+- `agent-file-ops-core`
+- `agent-file-ops-ssh`
+- `agent-file-ops-archive`
+- `agent-file-ops-sync`
+- `agent-file-ops-cli`
 
 ### `packages/`
 TypeScript/npm surfaces.
 
 Planned packages:
 
-- `@avatar-arts/agentfs-schema`
-- `@avatar-arts/agentfs-client`
-- `@avatar-arts/agentfs-mcp`
-- `@avatar-arts/agentfs`
+- `@avatar-arts/agent-file-ops-schema`
+- `@avatar-arts/agent-file-ops-client`
+- `@avatar-arts/agent-file-ops-mcp`
+- `@avatar-arts/agent-file-ops`
 
 The MCP package translates canonical operations into MCP tools. It must not redefine path, risk, archive, sync, or audit semantics.
 
-### `cmd/agentfsd/`
+### `cmd/agent-file-opsd/`
 Deployable daemon/gateway track. Go is favored for a low-dependency single-binary service, but daemon language is not part of the protocol contract.
 
 ### `sdk/`
@@ -46,14 +46,14 @@ Language SDKs. SDK behavior is generated/adapted from protocol contracts and ver
 Procedural guidance for agents. Skills may explain safe behavior but never become an alternate authorization or filesystem implementation layer.
 
 ### `presets/`
-Provider configuration/documentation recipes. Presets never contain credentials and may not redefine AgentFS semantics.
+Provider configuration/documentation recipes. Presets never contain credentials and may not redefine AgentFileOps semantics.
 
 ## Control flow
 
 ```text
 request
   -> surface adapter (MCP / CLI / SDK)
-  -> canonical AgentFS operation
+  -> canonical AgentFileOps operation
   -> capability + path resolution
   -> risk / preflight policy
   -> backend strategy selection
@@ -65,7 +65,7 @@ request
 
 ## Shell boundary
 
-AgentFS does not expose arbitrary remote shell execution. SSH shell capabilities may be used internally only through constrained templates for operations already represented by AgentFS semantics. If safe translation cannot be proven, implementations fall back to portable filesystem strategies.
+AgentFileOps does not expose arbitrary remote shell execution. SSH shell capabilities may be used internally only through constrained templates for operations already represented by AgentFileOps semantics. If safe translation cannot be proven, implementations fall back to portable filesystem strategies.
 
 ## Cross-language rule
 
@@ -75,9 +75,13 @@ Changing a canonical operation requires protocol/schema and conformance review b
 
 Major changes use:
 
-- AgentFS Orchestrator
-- AgentFS Protocol Architect
-- AgentFS Security Reviewer
-- AgentFS Conformance Verifier
+- AgentFileOps Orchestrator
+- AgentFileOps Protocol Architect
+- AgentFileOps Security Reviewer
+- AgentFileOps Conformance Verifier
 
 These adapt `superAgents`, `superSkills`, and `agent-skills` contracts recorded in `manifests/source-lock.json`.
+
+## Naming rule
+
+Active product and package identifiers use `AgentFileOps`, `agent-file-ops`, or `agentfileops` as appropriate for the surface. `AgentFS` is retained only in historical ADRs, migration notes, or filenames whose purpose is to document the rename.
