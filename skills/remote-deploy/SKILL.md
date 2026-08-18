@@ -52,3 +52,7 @@ Never accept raw credentials or an unbounded shell command.
 ## Verification
 
 Record the exact preflight, approval, publish, and post-deploy checks. A deployment is incomplete until the target state is verified.
+
+## Failure behavior
+
+Stop before publication when the artifact digest, target snapshot, approval, or rollback plan is missing or changed. Preserve the preflight and report the exact boundary that prevented deployment.
