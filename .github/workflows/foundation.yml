@@ -32,7 +32,7 @@ jobs:
               print(source['id'], source.get('repository'), source.get('commit','unversioned'))
           PY
 
-  vertical-slice-01:
+  conformance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,4 +43,4 @@ jobs:
       - name: Run Rust workspace tests
         run: cargo test --workspace --all-targets
       - name: Run black-box AgentFileOps conformance tests
-        run: python -m pytest tests/conformance/test_vertical_slice_01.py -v
+        run: python -m pytest tests/conformance/test_vertical_slice_01.py tests/conformance/test_vertical_slice_02.py -v
