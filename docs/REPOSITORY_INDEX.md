@@ -9,6 +9,7 @@ This index is the map for the current main branch. It separates what exists, wha
 3. [Security](../SECURITY.md) — trust boundaries and forbidden behavior.
 4. [Protocol](../protocol/README.md) — schemas and semantic operation vocabulary.
 5. [Audit report](../AUDIT_REPORT.md) — evidence-based readiness assessment.
+6. [Discovery manifest](../manifests/discovery.json) — canonical naming and distribution vocabulary.
 6. [Changelog](../CHANGELOG.md) — historical changes and verification notes.
 
 ## Inventory
@@ -20,15 +21,15 @@ This index is the map for the current main branch. It separates what exists, wha
 | CLI | crates/agent-file-ops-cli/ | JSON command/conformance surface | implemented foundation |
 | SSH/SFTP | crates/agent-file-ops-ssh/ | transport configuration and operations | partial |
 | Tests | tests/ | black-box and integration evidence | VS01 real; VS02/03 incomplete |
-| Validation | scripts/validate_foundation.py | metadata and safety invariants | executable |
+| Validation | scripts/validate_foundation.py, scripts/validate_skills.py, scripts/validate_source_lock.py, scripts/validate_repository_assets.py | foundation, skill, provenance, and asset invariants | executable |
 | Skills | skills/ | agent-facing procedural contracts | present; needs enrichment |
 | Agents | manifests/agents.json | review and verification roles | declared |
 | Source lock | manifests/source-lock.json | pinned ecosystem provenance | authoritative metadata |
 | Distribution | packages/, sdk/, cmd/ | future adapters and package surfaces | staged |
 | Provider recipes | presets/ | provider-specific guidance | non-authoritative |
-| Visual system | docs/DESIGN_SYSTEM.md, docs/design/ | visual language and diagrams | documentation |
+| Visual system | docs/DESIGN_SYSTEM.md, docs/design/, docs/assets/ | visual language, diagrams, legends, and campaign assets | documentation |
 | Dashboard | docs/site/ | static project status surface | documentation/deployment |
-| Workflows | .github/workflows/ | foundation CI and Pages deployment | executable |
+| Workflows | .github/workflows/ | foundation CI, quality gates, asset checks, and Pages deployment | executable |
 
 ## Canonical flow
 
