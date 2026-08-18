@@ -1,15 +1,11 @@
 # agent-file-opsd
 
-`agent-file-opsd` is the deployable AgentFileOps gateway/daemon track.
+Go daemon for AgentFileOps remote operations.
 
-Primary goals:
+## Purpose
 
-- simple single-binary deployment;
-- remote AgentFileOps service for VPS/server environments;
-- low-dependency container images;
-- protocol-conformant HTTP/service surface;
-- reusable backend connections without embedding credentials in requests.
+Provides a long-running daemon interface to AgentFileOps protocol over network sockets.
 
-Go is the recommended initial daemon language because deployment simplicity is the dominant concern here. The daemon must still consume AgentFileOps protocol semantics rather than developing a Go-specific filesystem contract.
+## Status
 
-Status: foundation placeholder. No daemon implementation is claimed yet.
+Early-stage development. Planned features: gRPC/HTTP transport, credential management, audit logging.

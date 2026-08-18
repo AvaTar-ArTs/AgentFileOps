@@ -1,25 +1,35 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/operation.schema.json",
   "title": "AgentFileOps Operation",
-  "description": "Canonical semantic remote file operation. Public operations never contain arbitrary shell command execution.",
+  "description": "Semantic file operation with risk classification. No arbitrary shell operations.",
   "type": "object",
-  "additionalProperties": false,
   "required": ["operation"],
   "properties": {
     "operation": {
+      "type": "string",
       "enum": [
-        "connections", "list", "stat", "find", "read", "write", "transfer",
-        "mkdir", "touch", "rename", "move", "copy", "chmod", "symlink", "delete",
-        "archive.inspect", "archive.create", "archive.extract", "sync"
-      ]
-    },
-    "source": {"$ref": "path.schema.json"},
-    "destination": {"$ref": "path.schema.json"},
-    "target": {"$ref": "path.schema.json"},
-    "dry_run": {"type": "boolean", "default": false},
-    "overwrite": {"type": "boolean", "default": false},
-    "delete": {"type": "boolean", "default": false},
-    "options": {"type": "object", "additionalProperties": true}
+        "list",
+        "stat",
+        "find",
+        "read",
+        "checksum",
+        "mkdir",
+        "write",
+        "copy-new",
+        "copy-overwrite",
+        "move",
+        "chmod",
+        "symlink",
+        "delete",
+        "recursive-delete",
+        "transfer",
+        "sync",
+        "sync-delete",
+        "archive",
+        "extract"
+      ],
+      "description": "Semantic operation name. Forbidden: exec, shell, command, run_command, ssh_exec"
+    }
   }
 }

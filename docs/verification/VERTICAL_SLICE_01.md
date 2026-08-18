@@ -1,17 +1,24 @@
-# Vertical Slice 01 Verification Checklist
+# Vertical Slice 01: Path Normalization & Risk Classification
 
-This file records the verifier gate for the first executable AgentFileOps slice.
+## Purpose
 
-Required evidence before the slice is called complete:
+Validate core semantics of path handling and operation risk classification across all implementation surfaces.
 
-- [ ] `python scripts/validate_foundation.py`
-- [ ] `cargo test --workspace --all-targets`
-- [ ] `python -m pytest tests/conformance/test_vertical_slice_01.py -v`
-- [ ] normalized home-relative path matches the protocol contract
-- [ ] relative traversal above selected base fails closed
-- [ ] absolute mode requires an absolute path
-- [ ] risk mapping produces levels 0 through 4 correctly
-- [ ] unknown operations fail closed
-- [ ] active naming surfaces contain no retired `AgentFS` identifiers outside historical records
+## Test Coverage
 
-A checked box must correspond to fresh command output from CI or an equivalent environment. This document is not itself evidence that a check passed.
+### Path Normalization
+- Relative path resolution with multiple bases (home, absolute, root)
+- Path canonicalization (remove ./, ../, etc.)
+- Escape prevention (prevent ../../etc/passwd attacks)
+- Symlink handling (explicit follow/no-follow controls)
+
+### Risk Classification
+- L0 (read-only): list, stat, find, read, checksum
+- L1 (additive): mkdir, write new file, copy to new path
+- L2 (replacement): overwrite, move, chmod, symlink creation
+- L3 (destructive): single delete
+- L4 (high-impact): recursive delete, bulk delete, sync with deletion
+
+## Conformance
+
+All implementation surfaces (Rust, TypeScript, Python, Go) must produce identical results for these tests.

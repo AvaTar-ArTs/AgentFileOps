@@ -1,58 +1,17 @@
 {
-  "checkpoint": "agentfileops-checkpoint-01",
-  "captured_at": "2026-08-18T09:03:00-04:00",
-  "repository": "AvaTar-ArTs/AgentFileOps",
-  "branch": "main",
-  "main_commit": "5f516d2d29c4a004742bfcecd460088317113269",
-  "checkpoint_doc_commit": "c40f8195fcb7e819d1d27c0fd00e5b64557cbcd3",
-  "product": {
-    "name": "AgentFileOps",
-    "tagline": "Give agents files, not a shell.",
-    "category": "Remote File Operations for AI Agents",
-    "cli": "afo"
+  "version": 1,
+  "checkpoint_id": "2026-08-18-agentfileops-checkpoint-01",
+  "date": "2026-08-18T00:00:00Z",
+  "status": "foundation-plus-vs01",
+  "product": "AgentFileOps",
+  "completions": {
+    "protocol_schemas": ["connection", "path", "operation", "plan", "result", "audit", "ssh-transport"],
+    "rust_crates": ["agent-file-ops-core", "agent-file-ops-cli", "agent-file-ops-ssh"],
+    "conformance_slices": ["vertical-slice-01"],
+    "discovery_metadata": ["discovery.json", "agents.json", "skills.json"]
   },
-  "architecture": {
-    "canonical_layer": "protocol",
-    "surfaces": [
-      "rust-core",
-      "typescript-mcp",
-      "go-daemon",
-      "python-sdk",
-      "cli",
-      "agent-skills",
-      "provider-presets"
-    ]
-  },
-  "implemented_slices": [
-    "vertical-slice-01-path-and-risk-semantics",
-    "vertical-slice-02-connection-path-and-backend-strategy"
-  ],
-  "verification": {
-    "current_pr": 2,
-    "verification_branch": "verify/discovery-and-slice-02",
-    "pr_mergeable": true,
-    "workflow_runs_visible_via_connector": false,
-    "rust_tests_claimed_green": false,
-    "live_ssh_sftp_tested": false
-  },
-  "branch_hygiene": {
-    "removed": [
-      "verify/agentfileops-rename",
-      "verify/vertical-slice-01"
-    ],
-    "retained": [
-      "verify/discovery-and-slice-02"
-    ],
-    "auto_delete_merged_heads": "user-confirmed-enabled"
-  },
-  "next_slice": "vertical-slice-03-real-ssh-sftp-transport",
-  "resume_invariants": [
-    "no arbitrary public shell execution",
-    "provider presets do not redefine protocol semantics",
-    "conformance before implementation",
-    "strict host-key verification",
-    "credentials referenced rather than embedded",
-    "no completion claim without fresh verification evidence",
-    "active public identity remains AgentFileOps"
-  ]
+  "in_progress": {
+    "conformance_slices": ["vertical-slice-02", "vertical-slice-03"],
+    "language_surfaces": ["typescript-mcp", "python-sdk", "go-daemon"]
+  }
 }

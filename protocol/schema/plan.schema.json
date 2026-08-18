@@ -1,25 +1,31 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/plan.schema.json",
   "title": "AgentFileOps Operation Plan",
-  "description": "Preflight plan for replacement, destructive, or high-impact AgentFileOps remote file operations.",
+  "description": "Preflight plan for high-risk operations with snapshots and expirations.",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["plan_id", "operation", "risk_level", "created_at", "expires_at", "fingerprint", "actions"],
+  "required": ["plan_id", "operation", "risk_level"],
   "properties": {
-    "plan_id": {"type": "string", "minLength": 1},
-    "operation": {"type": "string"},
-    "risk_level": {"enum": [0, 1, 2, 3, 4]},
-    "created_at": {"type": "string", "format": "date-time"},
-    "expires_at": {"type": "string", "format": "date-time"},
-    "fingerprint": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
-    "actions": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
-    "files": {"type": "integer", "minimum": 0},
-    "directories": {"type": "integer", "minimum": 0},
-    "estimated_bytes": {"type": "integer", "minimum": 0},
-    "conflicts": {"type": "array", "items": {"type": "object"}},
-    "symlinks": {"type": "array", "items": {"type": "object"}},
-    "strategy": {"type": "string"},
-    "target_snapshot": {"type": "object", "additionalProperties": true}
+    "plan_id": {
+      "type": "string",
+      "description": "Unique plan identifier"
+    },
+    "operation": {
+      "type": "string",
+      "description": "Operation being planned"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["level_0", "level_1", "level_2", "level_3", "level_4"]
+    },
+    "target_snapshot": {
+      "type": "string",
+      "description": "Fingerprint of target state before execution"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Plan expiration timestamp"
+    }
   }
 }

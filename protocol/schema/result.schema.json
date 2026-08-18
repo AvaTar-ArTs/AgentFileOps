@@ -1,30 +1,27 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/result.schema.json",
   "title": "AgentFileOps Operation Result",
-  "description": "Normalized result envelope for AgentFileOps remote file operations across CLI, MCP, SDK, and daemon surfaces.",
+  "description": "Normalized result from any semantic operation.",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["ok", "operation", "strategy"],
+  "required": ["success", "operation"],
   "properties": {
-    "ok": {"type": "boolean"},
-    "operation": {"type": "string"},
-    "strategy": {"type": "string"},
-    "atomic": {"type": ["boolean", "null"]},
-    "bytes": {"type": "integer", "minimum": 0},
-    "files": {"type": "integer", "minimum": 0},
-    "checksum": {"type": "string"},
-    "path": {"type": "object", "additionalProperties": true},
-    "data": {},
-    "audit_event_id": {"type": "string"},
+    "success": {
+      "type": "boolean"
+    },
+    "operation": {
+      "type": "string"
+    },
+    "result": {
+      "type": "object",
+      "description": "Operation-specific result data"
+    },
     "error": {
       "type": "object",
       "properties": {
         "code": {"type": "string"},
         "message": {"type": "string"}
-      },
-      "required": ["code", "message"],
-      "additionalProperties": true
+      }
     }
   }
 }

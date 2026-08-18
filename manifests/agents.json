@@ -4,38 +4,30 @@
     {
       "id": "agentfileops.orchestrator",
       "name": "AgentFileOps Orchestrator",
-      "description": "Map work to canonical AgentFileOps capabilities, select implementation surfaces, apply approval boundaries, and coordinate cross-language execution.",
-      "inherits": ["superagents.orchestrator", "agent-skills:workflow-orchestrator"],
-      "capabilities": ["intent-routing", "surface-selection", "execution-planning", "cross-language-coordination"],
-      "skills": ["process.brainstorming", "process.verification", "agentfileops.protocol-conformance"],
-      "approval": "approval_required"
+      "description": "Orchestrates verification, policy boundaries, and catalog locking for AgentFileOps development.",
+      "source": "superAgents",
+      "responsibilities": ["orchestration", "verification", "policy-enforcement", "audit-schema"]
     },
     {
       "id": "agentfileops.protocol-architect",
       "name": "AgentFileOps Protocol Architect",
-      "description": "Protect protocol-first boundaries and prevent Rust, TypeScript, Go, Python, MCP, CLI, or provider presets from redefining canonical semantics.",
-      "inherits": ["agent-skills:system-architect", "agent-skills:capability-atlas"],
-      "capabilities": ["protocol-design", "architecture-review", "capability-parity", "adr-review"],
-      "skills": ["process.brainstorming", "research.source-backed"],
-      "approval": "advisory"
+      "description": "Reviews protocol designs, schema changes, and semantic operation contracts.",
+      "source": "agent-skills",
+      "responsibilities": ["protocol-review", "schema-design", "cross-platform-compatibility"]
     },
     {
       "id": "agentfileops.security-reviewer",
       "name": "AgentFileOps Security Reviewer",
-      "description": "Review authentication, path handling, destructive mutations, symlinks, archives, transfers, redaction, and audit behavior using defense-in-depth principles.",
-      "inherits": ["agent-skills:security-engineer"],
-      "capabilities": ["threat-modeling", "security-review", "secret-boundary-review", "destructive-operation-review"],
-      "skills": ["process.test-driven-development", "process.verification"],
-      "approval": "advisory"
+      "description": "Ensures safety-first principles, risk classification accuracy, and no arbitrary shell exposure.",
+      "source": "agent-skills",
+      "responsibilities": ["security-review", "risk-classification", "audit-trail-design"]
     },
     {
       "id": "agentfileops.conformance-verifier",
       "name": "AgentFileOps Conformance Verifier",
-      "description": "Verify protocol fixtures, cross-surface parity, test evidence, and release claims without overstating completion.",
-      "inherits": ["superagents.verifier", "agent-skills:testing-specialist", "agent-skills:code-reviewer"],
-      "capabilities": ["contract-testing", "conformance", "plan-alignment-review", "release-verification"],
-      "skills": ["process.test-driven-development", "process.verification", "release.changelog-discipline"],
-      "approval": "advisory"
+      "description": "Validates semantic parity across all implementation surfaces against conformance fixtures.",
+      "source": "agent-skills",
+      "responsibilities": ["conformance-testing", "vertical-slice-validation", "black-box-testing"]
     }
   ]
 }

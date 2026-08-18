@@ -1,87 +1,40 @@
 {
-  "version": 3,
-  "catalog": "AgentFileOps",
+  "version": 1,
   "skills": [
     {
       "id": "agentfileops.remote-filesystem",
-      "name": "Remote Filesystem Operator",
+      "name": "AgentFileOps Remote Filesystem",
+      "description": "Implements semantic remote filesystem operations: list, stat, find, read, write, transfer.",
       "path": "skills/remote-file-operations/SKILL.md",
-      "discovery_name": "remote-file-operations",
-      "aliases": ["safe-remote-filesystem", "ssh-sftp-file-management", "server-file-management"],
-      "description": "Safely inspect, transfer, organize, archive, synchronize, deploy, and manage remote server files through AgentFileOps semantic operations instead of arbitrary shell commands.",
-      "tags": ["agentfileops", "remote-file-operations", "remote-filesystem", "filesystem-mcp", "ssh", "sftp", "file-transfer", "remote-server", "server-file-management", "agent-tools", "mcp"],
-      "capabilities": ["remote-filesystem", "safe-file-ops", "path-selection", "file-transfer", "server-file-management", "verification"],
-      "risk": "medium",
-      "status": "foundation"
+      "source": "superskills"
     },
     {
       "id": "agentfileops.safe-remote-deploy",
-      "name": "Safe Remote Deploy",
+      "name": "AgentFileOps Safe Remote Deploy",
+      "description": "Remote deployment operations with risk classification, preflight plans, and target snapshots.",
       "path": "skills/remote-deploy/SKILL.md",
-      "discovery_name": "remote-deploy",
-      "aliases": ["safe-remote-deploy", "remote-deployment"],
-      "description": "Plan, transfer, verify, archive, and activate deployable artifacts on remote systems using AgentFileOps preflight, checksum, approval, and integrity checks.",
-      "tags": ["agentfileops", "remote-deploy", "deployment", "devops", "ssh", "sftp", "remote-server", "release", "artifact-publishing", "automation"],
-      "capabilities": ["artifact-deploy", "transfer-integrity", "deployment-preflight", "remote-server-deployment"],
-      "risk": "high",
-      "status": "guidance-foundation"
+      "source": "superskills"
     },
     {
       "id": "agentfileops.remote-sync",
-      "name": "Remote Sync",
+      "name": "AgentFileOps Remote Sync",
+      "description": "Manifest-driven synchronization with deletion safety and bidirectional reconciliation.",
       "path": "skills/remote-sync/SKILL.md",
-      "discovery_name": "remote-sync",
-      "aliases": ["remote-filesystem-sync", "server-sync"],
-      "description": "Plan and execute differential remote filesystem synchronization while treating destination deletion as high-impact work.",
-      "tags": ["agentfileops", "remote-sync", "sync", "remote-filesystem", "ssh", "sftp", "backup", "migration", "devops"],
-      "capabilities": ["manifest-diff", "remote-sync", "delete-preflight", "filesystem-synchronization"],
-      "risk": "high",
-      "status": "guidance-foundation"
+      "source": "superskills"
     },
     {
       "id": "agentfileops.artifact-publisher",
-      "name": "Artifact Publisher",
+      "name": "AgentFileOps Artifact Publisher",
+      "description": "Publish, version, and distribute artifacts across remote servers with checksums and approval workflows.",
       "path": "skills/artifact-publisher/SKILL.md",
-      "discovery_name": "artifact-publisher",
-      "aliases": ["remote-artifact-publisher", "release-publisher"],
-      "description": "Publish build or creative artifacts to configured remote filesystem targets and verify final placement, size, checksum, and release state.",
-      "tags": ["agentfileops", "artifact-publisher", "artifact-publishing", "file-transfer", "remote-server", "deployment", "release", "automation"],
-      "capabilities": ["artifact-publishing", "checksum-verification", "remote-placement", "release-transfer"],
-      "risk": "medium",
-      "status": "guidance-foundation"
+      "source": "superskills"
     },
     {
       "id": "agentfileops.protocol-conformance",
       "name": "AgentFileOps Protocol Conformance",
+      "description": "Validate semantic parity across all implementation surfaces against shared conformance fixtures.",
       "path": "skills/protocol-conformance/SKILL.md",
-      "discovery_name": "agentfileops-protocol-conformance",
-      "aliases": ["remote-file-ops-conformance"],
-      "description": "Preserve one canonical AgentFileOps remote file operations contract across Rust, TypeScript, Go, Python, MCP, CLI, skills, and provider renderings using shared fixtures and parity tests.",
-      "tags": ["agentfileops", "protocol", "conformance", "testing", "mcp", "remote-filesystem", "cross-language"],
-      "capabilities": ["contract-testing", "parity", "drift-detection", "protocol-conformance"],
-      "risk": "low",
-      "status": "foundation"
+      "source": "superskills"
     }
-  ],
-  "skills_sh_discovery": {
-    "primary": "remote-file-operations",
-    "recommended_names": [
-      "remote-file-operations",
-      "safe-remote-filesystem",
-      "ssh-sftp-file-management",
-      "remote-deploy",
-      "artifact-publisher",
-      "remote-sync",
-      "server-file-management"
-    ]
-  },
-  "composes_with": [
-    "process.brainstorming",
-    "process.test-driven-development",
-    "process.verification",
-    "research.source-backed",
-    "integration.mcp-development",
-    "integration.catalog-synchronization",
-    "release.changelog-discipline"
   ]
 }

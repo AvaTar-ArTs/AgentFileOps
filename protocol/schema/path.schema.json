@@ -1,21 +1,24 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/AvaTar-ArTs/AgentFileOps/main/protocol/schema/path.schema.json",
-  "title": "AgentFileOps PathSpec",
-  "description": "Logical AgentFileOps path identity for home-, alias-, or explicit absolute-path operations.",
+  "title": "AgentFileOps Path Specification",
+  "description": "Path normalization with base selection and symlink semantics.",
   "type": "object",
-  "additionalProperties": false,
-  "required": ["connection", "base", "path"],
+  "required": ["base", "path", "follow_symlinks"],
   "properties": {
-    "connection": {"type": "string", "minLength": 1},
-    "base": {"type": "string", "minLength": 1},
-    "path": {"type": "string"},
-    "follow_symlinks": {"type": "boolean", "default": false}
-  },
-  "allOf": [
-    {
-      "if": {"properties": {"base": {"const": "absolute"}}, "required": ["base"]},
-      "then": {"properties": {"path": {"pattern": "^/"}}}
+    "base": {
+      "type": "string",
+      "enum": ["home", "absolute", "root"],
+      "description": "Base path context for relative resolution"
+    },
+    "path": {
+      "type": "string",
+      "description": "Path relative to base or absolute"
+    },
+    "follow_symlinks": {
+      "type": "boolean",
+      "default": false,
+      "description": "Explicitly control symlink following behavior"
     }
-  ]
+  }
 }

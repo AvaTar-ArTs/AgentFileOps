@@ -1,37 +1,23 @@
-# AgentFileOps Conformance Suite
+# AgentFileOps Conformance Tests
 
-Shared conformance fixtures are the executable parity layer across AgentFileOps implementations.
+## Purpose
 
-Every implementation claiming AgentFileOps compatibility should consume the same canonical fixtures for:
+Validate semantic parity across all implementation surfaces using shared fixtures.
 
-- path normalization and explicit absolute mode;
-- alias behavior;
-- risk classification;
-- preflight/fingerprint stability and invalidation;
-- symlink semantics;
-- archive traversal/link/device defenses;
-- sync manifest classification and delete policy;
-- normalized results/errors;
-- audit redaction;
-- capability fallback behavior.
+## Vertical Slices
 
-## Fixture shape
+### Slice 01: Path Normalization & Risk Classification
+Tests path resolution with multiple bases (home, absolute, root), symlink handling, and escape prevention.
+Also validates risk classification (L0-L4) for all operations.
 
-A fixture should contain:
+### Slice 02: Connection, Path, Backend Strategy
+Tests SSH/SFTP connection setup, transport security, credential handling, and backend-specific behaviors.
 
-```json
-{
-  "protocol_version": "0.1",
-  "case": "copy-new-target",
-  "input": {},
-  "environment": {},
-  "expected": {},
-  "invariants": []
-}
+### Slice 03: Full Operation Suite
+Tests all semantic operations: list, stat, find, read, write, transfer, manage, archive, sync.
+
+## Running Tests
+
+```bash
+pytest tests/conformance/ -v
 ```
-
-Surface-specific test harnesses may translate the fixture into native types, but expected semantic output must remain comparable.
-
-## Drift policy
-
-A failed parity test is not automatically an implementation bug. It may reveal protocol ambiguity. When ambiguity exists, stop and resolve the protocol/specification explicitly before changing multiple implementations to match whichever one happened to run first.

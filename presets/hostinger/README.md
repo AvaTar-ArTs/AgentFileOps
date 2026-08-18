@@ -1,25 +1,11 @@
-# Hostinger preset
+# Hostinger Preset
 
-Hostinger is an AgentFileOps provider recipe, not an AgentFileOps product boundary.
+AgentFileOps preset for Hostinger shared hosting and VPS environments.
 
-This preset exists to document common Hostinger SSH/SFTP configuration patterns and migration from `AvaTar-ArTs/hostinger-file-bridge`.
+## Purpose
 
-Typical connection shape:
+Provides sensible defaults for Hostinger SSH/SFTP connections, directory structures, and deployment patterns.
 
-```yaml
-id: hostinger-main
-backend: ssh
-host: <your-host>
-port: <your-ssh-port>
-username: <your-hosting-user>
-aliases:
-  home: .
-  domains: domains
-  web: domains/example.com/public_html
-```
+## Not a Product Boundary
 
-Never commit credentials, passwords, private keys, passphrases, or unverified host keys.
-
-AgentFileOps must discover actual capabilities at runtime rather than assuming every Hostinger plan has identical shell access or path namespaces.
-
-The previous Hostinger File Bridge research remains useful for SFTP, transfer tickets, archive safety, sync planning, and account-scoped path semantics, but Python-specific or one-root assumptions are not canonical AgentFileOps behavior.
+Hostinger preset is one provider recipe. AgentFileOps works with generic SSH/SFTP servers, cPanel/Plesk hosts, NAS systems, and any remote filesystem.
