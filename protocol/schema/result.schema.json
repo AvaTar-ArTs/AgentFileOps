@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://agentfs.dev/schema/0.1/result.schema.json",
+  "title":"AgentFS Operation Result",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["ok","operation","strategy"],
+  "properties":{
+    "ok":{"type":"boolean"},
+    "operation":{"type":"string"},
+    "strategy":{"type":"string"},
+    "atomic":{"type":["boolean","null"]},
+    "bytes":{"type":"integer","minimum":0},
+    "files":{"type":"integer","minimum":0},
+    "checksum":{"type":"string"},
+    "path":{"type":"object","additionalProperties":true},
+    "data":{},
+    "audit_event_id":{"type":"string"},
+    "error":{"type":"object","properties":{"code":{"type":"string"},"message":{"type":"string"}},"required":["code","message"],"additionalProperties":true}
+  }
+}
