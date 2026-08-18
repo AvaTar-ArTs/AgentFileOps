@@ -29,6 +29,8 @@ jobs:
       - name: Validate documentation and visual assets
         run: python scripts/validate_repository_assets.py
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/site
