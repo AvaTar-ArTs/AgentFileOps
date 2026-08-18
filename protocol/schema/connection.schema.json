@@ -44,7 +44,11 @@
     },
     "credential_ref": {
       "type": "string",
-      "description": "Reference to secret material; raw credentials are not allowed in the protocol object."
+      "description": "Legacy/top-level reference retained during protocol 0.1. SSH connections should use transport.credential_ref."
+    },
+    "transport": {
+      "$ref": "ssh-transport.schema.json",
+      "description": "Transport-specific policy. Required by implementation for SSH connections."
     }
   }
 }
