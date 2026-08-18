@@ -1,0 +1,33 @@
+name: AgentFS Foundation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate foundation contracts
+        run: python scripts/validate_foundation.py
+
+  source-lock-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Display pinned ecosystem sources
+        run: python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path('manifests/source-lock.json').read_text())
+          for source in data['sources']:
+              print(source['id'], source.get('repository'), source.get('commit','unversioned'))
+          PY
