@@ -22,5 +22,5 @@ serde_json = "1"
 thiserror = "2"
 clap = { version = "4", features = ["derive"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "fs", "time", "net", "io-util", "sync"] }
-russh = "0.62"
-russh-sftp = "2.3"
+russh = "=0.62.5"
+russh-sftp = "=2.4.0"
