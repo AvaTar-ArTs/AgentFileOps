@@ -1,6 +1,6 @@
 # Vertical Slice 01 Verification Checklist
 
-This file records the verifier gate for the first executable AgentFS slice.
+This file records the verifier gate for the first executable AgentFileOps slice.
 
 Required evidence before the slice is called complete:
 
@@ -12,5 +12,6 @@ Required evidence before the slice is called complete:
 - [ ] absolute mode requires an absolute path
 - [ ] risk mapping produces levels 0 through 4 correctly
 - [ ] unknown operations fail closed
+- [ ] active naming surfaces contain no retired `AgentFS` identifiers outside historical records
 
 A checked box must correspond to fresh command output from CI or an equivalent environment. This document is not itself evidence that a check passed.
