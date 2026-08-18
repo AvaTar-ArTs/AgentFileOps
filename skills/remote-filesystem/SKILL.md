@@ -1,11 +1,11 @@
 ---
 name: remote-filesystem
-description: Safely inspect, transfer, organize, archive, synchronize, and manage files on AgentFS-connected remote systems. Use when the task is about remote files or deployments and structured AgentFS operations are preferable to arbitrary shell commands.
+description: Safely inspect, transfer, organize, archive, synchronize, and manage files on AgentFileOps-connected remote systems. Use when the task is about remote files or deployments and structured AgentFileOps operations are preferable to arbitrary shell commands.
 ---
 
 # Remote Filesystem Operator
 
-Use AgentFS semantic filesystem capabilities instead of raw shell commands whenever the task can be represented as file operations.
+Use AgentFileOps semantic filesystem capabilities instead of raw shell commands whenever the task can be represented as file operations.
 
 ## Core rule
 
@@ -42,7 +42,7 @@ Never silently escalate L1 into overwrite when a destination appears during exec
 - Never use `..` as a substitute for selecting a broader base.
 - Absolute paths require explicit absolute mode.
 - Recursive traversal defaults to not following symlinks.
-- If SFTP and shell namespaces differ, rely on AgentFS resolution rather than rewriting paths manually.
+- If SFTP and shell namespaces differ, rely on AgentFileOps resolution rather than rewriting paths manually.
 
 ## Transfers
 
