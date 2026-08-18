@@ -1,0 +1,25 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://agentfs.dev/schema/0.1/audit.schema.json",
+  "title":"AgentFS Audit Event",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["event_id","timestamp","operation_id","operation","risk_level","outcome"],
+  "properties":{
+    "event_id":{"type":"string","minLength":1},
+    "timestamp":{"type":"string","format":"date-time"},
+    "operation_id":{"type":"string","minLength":1},
+    "connection":{"type":"string"},
+    "operation":{"type":"string"},
+    "risk_level":{"enum":[0,1,2,3,4]},
+    "strategy":{"type":"string"},
+    "dry_run":{"type":"boolean"},
+    "plan_id":{"type":"string"},
+    "fingerprint_prefix":{"type":"string","maxLength":16},
+    "paths":{"type":"array","items":{"type":"object","additionalProperties":true}},
+    "files":{"type":"integer","minimum":0},
+    "bytes":{"type":"integer","minimum":0},
+    "outcome":{"enum":["success","failure","planned","rejected"]},
+    "error_code":{"type":"string"}
+  }
+}
