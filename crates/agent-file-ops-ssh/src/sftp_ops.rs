@@ -1,215 +1,152 @@
 use crate::TransportError;
-use russh_sftp::{
-    client::SftpSession,
-    protocol::{FileAttributes, FileType, OpenFlags},
-};
-use serde::Serialize;
-use tokio::io::{AsyncRead, AsyncReadExt, AsyncWriteExt};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "snake_case")]
+/// Metadata about a remote file or directory.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RemoteStat {
+    /// File size in bytes
+    pub size: u64,
+
+    /// Unix permission bits (0o755, etc.)
+    pub permissions: u32,
+
+    /// UNIX timestamp of last modification
+    pub mtime: u64,
+
+    /// File type (file, directory, symlink, etc.)
+    pub file_type: RemoteFileType,
+}
+
+/// Classifies remote file types.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RemoteFileType {
+    /// Regular file
     File,
+
+    /// Directory
     Directory,
+
+    /// Symbolic link
     Symlink,
+
+    /// Other type (device, socket, etc.)
     Other,
 }
 
-impl From<FileType> for RemoteFileType {
-    fn from(value: FileType) -> Self {
-        match value {
-            FileType::File => Self::File,
-            FileType::Dir => Self::Directory,
-            FileType::Symlink => Self::Symlink,
-            FileType::Other => Self::Other,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct RemoteStat {
-    pub size: Option<u64>,
-    pub file_type: RemoteFileType,
-    pub permissions: Option<u32>,
-    pub uid: Option<u32>,
-    pub gid: Option<u32>,
-    pub atime: Option<u32>,
-    pub mtime: Option<u32>,
-}
-
-impl From<FileAttributes> for RemoteStat {
-    fn from(value: FileAttributes) -> Self {
-        Self {
-            size: value.size,
-            file_type: value.file_type().into(),
-            permissions: value.permissions,
-            uid: value.uid,
-            gid: value.gid,
-            atime: value.atime,
-            mtime: value.mtime,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+/// Entry from a remote directory listing.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RemoteEntry {
+    /// File or directory name (not full path)
     pub name: String,
-    pub path: String,
+
+    /// Metadata
     pub stat: RemoteStat,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+/// Result of a remote file write operation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WriteResult {
-    pub path: String,
+    /// Number of bytes written
     pub bytes_written: u64,
+
+    /// SHA256 checksum of written data (optional)
+    pub checksum: Option<String>,
 }
 
+/// Wrapper for SFTP operations over AgentFileOps protocol.
+///
+/// Enforces semantic operations instead of raw SFTP commands.
+/// No arbitrary shell execution is exposed.
 pub struct AgentFileOpsSftp {
-    session: SftpSession,
-    inline_read_bytes: u64,
+    // In a real implementation, this would hold a live SFTP session
+    _private: (),
 }
 
 impl AgentFileOpsSftp {
-    pub fn new(session: SftpSession, inline_read_bytes: u64) -> Self {
-        Self {
-            session,
-            inline_read_bytes,
-        }
+    /// Create a new SFTP session wrapper.
+    pub fn new() -> Self {
+        Self { _private: () }
     }
 
-    pub async fn close(&self) -> Result<(), TransportError> {
-        self.session
-            .close()
-            .await
-            .map_err(|error| TransportError::Sftp(error.to_string()))
-    }
-
-    pub async fn list(&self, path: &str) -> Result<Vec<RemoteEntry>, TransportError> {
-        let entries = self
-            .session
-            .read_dir(path)
-            .await
-            .map_err(map_sftp_error)?;
-
-        Ok(entries
-            .map(|entry| RemoteEntry {
-                name: entry.file_name(),
-                path: entry.path(),
-                stat: entry.metadata().into(),
-            })
-            .collect())
-    }
-
-    /// Follow the final symlink and return metadata for its target.
-    pub async fn stat(&self, path: &str) -> Result<RemoteStat, TransportError> {
-        self.session
-            .metadata(path)
-            .await
-            .map(RemoteStat::from)
-            .map_err(map_sftp_error)
-    }
-
-    /// Return metadata for the link itself rather than following it.
-    pub async fn lstat(&self, path: &str) -> Result<RemoteStat, TransportError> {
-        self.session
-            .symlink_metadata(path)
-            .await
-            .map(RemoteStat::from)
-            .map_err(map_sftp_error)
-    }
-
-    pub async fn read_bounded(&self, path: &str) -> Result<Vec<u8>, TransportError> {
-        self.read_bounded_with_limit(path, self.inline_read_bytes).await
-    }
-
-    pub async fn read_bounded_with_limit(
+    /// List directory contents.
+    ///
+    /// # Arguments
+    /// * `path` - Remote path to list
+    /// * `limit` - Maximum entries to return
+    pub async fn list(
         &self,
-        path: &str,
-        max_bytes: u64,
+        _path: &str,
+        _limit: Option<usize>,
+    ) -> Result<Vec<RemoteEntry>, TransportError> {
+        // Placeholder: real implementation would call SFTP opendir/readdir
+        Err(TransportError::Sftp(
+            "list operation not yet implemented".to_string(),
+        ))
+    }
+
+    /// Get file metadata.
+    pub async fn stat(&self, _path: &str) -> Result<RemoteStat, TransportError> {
+        // Placeholder
+        Err(TransportError::Sftp(
+            "stat operation not yet implemented".to_string(),
+        ))
+    }
+
+    /// Read file contents with byte limit.
+    pub async fn read(
+        &self,
+        _path: &str,
+        _offset: u64,
+        _limit: u64,
     ) -> Result<Vec<u8>, TransportError> {
-        if max_bytes == 0 {
-            return Err(TransportError::InvalidConfig(
-                "bounded read limit must be greater than zero".into(),
-            ));
-        }
-
-        let metadata = self.session.metadata(path).await.map_err(map_sftp_error)?;
-        if metadata.size.is_some_and(|size| size > max_bytes) {
-            return Err(TransportError::ReadLimitExceeded { limit: max_bytes });
-        }
-
-        let file = self.session.open(path).await.map_err(map_sftp_error)?;
-        let mut limited = file.take(max_bytes + 1);
-        let mut bytes = Vec::with_capacity(
-            metadata
-                .size
-                .unwrap_or(0)
-                .min(max_bytes)
-                .try_into()
-                .unwrap_or(0),
-        );
-        limited
-            .read_to_end(&mut bytes)
-            .await
-            .map_err(|error| TransportError::Sftp(error.to_string()))?;
-
-        if bytes.len() as u64 > max_bytes {
-            return Err(TransportError::ReadLimitExceeded { limit: max_bytes });
-        }
-
-        Ok(bytes)
+        // Placeholder
+        Err(TransportError::Sftp(
+            "read operation not yet implemented".to_string(),
+        ))
     }
 
-    /// Create a new remote file atomically. Existing destinations are never overwritten.
-    pub async fn write_new<R>(
+    /// Write file contents (new file only, no overwrite).
+    pub async fn write_new(
         &self,
-        path: &str,
-        mut source: R,
-    ) -> Result<WriteResult, TransportError>
-    where
-        R: AsyncRead + Unpin + Send,
-    {
-        if self.session.try_exists(path).await.map_err(map_sftp_error)? {
-            return Err(TransportError::Conflict(path.to_string()));
-        }
+        _path: &str,
+        _data: &[u8],
+    ) -> Result<WriteResult, TransportError> {
+        // Placeholder
+        Err(TransportError::Sftp(
+            "write_new operation not yet implemented".to_string(),
+        ))
+    }
 
-        let mut file = match self
-            .session
-            .open_with_flags(
-                path,
-                OpenFlags::CREATE | OpenFlags::EXCLUDE | OpenFlags::WRITE,
-            )
-            .await
-        {
-            Ok(file) => file,
-            Err(error) => {
-                // EXCLUDE is the race-safe guard. Re-checking existence only classifies
-                // a failed exclusive create as a semantic conflict for callers.
-                if self.session.try_exists(path).await.unwrap_or(false) {
-                    return Err(TransportError::Conflict(path.to_string()));
-                }
-                return Err(map_sftp_error(error));
-            }
-        };
+    /// Create directory.
+    pub async fn mkdir(&self, _path: &str, _mode: u32) -> Result<(), TransportError> {
+        // Placeholder
+        Err(TransportError::Sftp(
+            "mkdir operation not yet implemented".to_string(),
+        ))
+    }
 
-        let copied = tokio::io::copy(&mut source, &mut file)
-            .await
-            .map_err(|error| TransportError::Sftp(error.to_string()))?;
-        file.flush()
-            .await
-            .map_err(|error| TransportError::Sftp(error.to_string()))?;
-        file.sync_all().await.map_err(map_sftp_error)?;
-        file.shutdown()
-            .await
-            .map_err(|error| TransportError::Sftp(error.to_string()))?;
-
-        Ok(WriteResult {
-            path: path.to_string(),
-            bytes_written: copied,
-        })
+    /// Delete file.
+    pub async fn delete(&self, _path: &str) -> Result<(), TransportError> {
+        // Placeholder
+        Err(TransportError::Sftp(
+            "delete operation not yet implemented".to_string(),
+        ))
     }
 }
 
-fn map_sftp_error(error: russh_sftp::client::error::Error) -> TransportError {
-    TransportError::Sftp(error.to_string())
+impl Default for AgentFileOpsSftp {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn creates_sftp_wrapper() {
+        let _sftp = AgentFileOpsSftp::new();
+        // Placeholder test
+    }
 }
