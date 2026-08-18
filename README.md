@@ -31,19 +31,9 @@ A shell asks an agent to invent commands. AgentFileOps asks an agent to declare 
 
 The protocol turns remote file work into a reviewable lifecycle:
 
-```text
-Agent intent
-    ↓
-Semantic operation
-    ↓
-Path and capability resolution
-    ↓
-Risk and approval
-    ↓
-Backend execution
-    ↓
-Verified result and audit
-```
+![AgentFileOps operation lifecycle](docs/assets/generated/agentfileops-workflow-visual.png)
+
+The image is illustrative; protocol schemas, Rust implementation, security policy, and conformance tests remain authoritative.
 
 The protocol is canonical. Rust, CLI, MCP, SDK, daemon, and skills surfaces are replaceable implementations or adapters.
 
