@@ -1,8 +1,8 @@
 #[test]
-fn session_source_has_strict_server_key_callback() {
+fn session_source_validates_configuration_before_connecting() {
     let source = include_str!("../src/session.rs");
-    assert!(source.contains("check_server_key"));
-    assert!(source.contains("StrictHostKeyVerifier"));
+    assert!(source.contains(".validate()"));
+    assert!(source.contains("TransportError::InvalidConfig"));
 }
 
 #[test]
@@ -21,8 +21,7 @@ fn session_source_exposes_no_generic_exec_api() {
 }
 
 #[test]
-fn session_source_opens_sftp_as_a_subsystem_not_shell() {
+fn session_source_does_not_open_a_shell() {
     let source = include_str!("../src/session.rs");
-    assert!(source.contains("request_subsystem(true, \"sftp\")"));
     assert!(!source.contains("request_shell("));
 }

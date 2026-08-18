@@ -51,7 +51,7 @@ impl SshTransportConfig {
         known_hosts_ref: impl Into<String>,
         credential_ref: impl Into<String>,
     ) -> Self {
-        assert!(port > 0 && port <= 65535, "SSH port must be 1-65535");
+        assert!(port > 0, "SSH port must be 1-65535");
 
         Self {
             host: host.into(),

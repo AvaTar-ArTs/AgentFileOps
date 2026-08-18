@@ -40,7 +40,9 @@ impl AgentFileOpsSshSession {
     /// For now, this is a placeholder that validates configuration.
     pub async fn connect(&mut self) -> Result<(), TransportError> {
         // Validate configuration before attempting connection
-        self.config.validate().map_err(TransportError::InvalidConfig)?;
+        self.config
+            .validate()
+            .map_err(TransportError::InvalidConfig)?;
 
         // In a real implementation:
         // - Resolve self.config.known_hosts_ref
@@ -98,5 +100,17 @@ mod tests {
         // Should succeed (config is valid)
         assert!(session.connect().await.is_ok());
         assert!(session.is_authenticated());
+    }
+
+    #[tokio::test]
+    async fn rejects_invalid_config_on_connect() {
+        let config = SshTransportConfig::new("", 22, "known_hosts", "my-key");
+        let mut session = AgentFileOpsSshSession::new(config);
+
+        assert!(matches!(
+            session.connect().await,
+            Err(TransportError::InvalidConfig(message)) if message == "host must not be empty"
+        ));
+        assert!(!session.is_authenticated());
     }
 }
