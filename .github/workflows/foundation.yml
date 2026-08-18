@@ -42,5 +42,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Run Rust workspace tests
         run: cargo test --workspace --all-targets
+      - name: Install Python test dependencies
+        run: python -m pip install --upgrade pytest
       - name: Run black-box AgentFileOps conformance tests
         run: python -m pytest tests/conformance/test_vertical_slice_01.py tests/conformance/test_vertical_slice_02.py tests/conformance/test_vertical_slice_03.py -v
