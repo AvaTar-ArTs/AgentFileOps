@@ -6,7 +6,8 @@
 
 <p align="center">
   <strong>Give agents files, not a shell.</strong><br>
-  Safe, semantic remote filesystem operations for AI agents and MCP clients
+  Safe, semantic remote filesystem operations for AI agents and MCP clients<br>
+  <em>Safe Remote Filesystem, SSH/SFTP, Sync &amp; Deployment Operations for AI Agents</em>
 </p>
 
 <p align="center">
@@ -18,6 +19,8 @@
 
 > [!WARNING]
 > AgentFileOps is under active development. The protocol, safety model, and first Rust conformance slices are being built now. Planned package names, CLI examples, and future SSH/SFTP runtime work are not released production features.
+
+**Category:** Remote File Operations for AI Agents.
 
 ## The idea
 
@@ -116,6 +119,24 @@ Core boundaries:
 - destructive delete, archive, and sync runtime behavior;
 - production-readiness certification.
 
+## Planned distribution surfaces
+
+These names are reserved product-direction targets. They are not claims that public packages, images, or skill listings are already published.
+
+| Surface | Planned identifier | Status |
+|---|---|---|
+| Rust core | `agent-file-ops-core` | Foundation implemented |
+| Rust CLI | `agent-file-ops-cli` / `afo` | Foundation / staged |
+| SSH/SFTP runtime | AgentFileOps SSH transport | In progress |
+| MCP gateway | `@avatar-arts/agent-file-ops-mcp` | Planned |
+| Python SDK | `agent-file-ops` | Staged / not published |
+| Go daemon | `agent-file-ops-go` | Staged / not published |
+| npm packages | `@avatar-arts/agent-file-ops-*` | Not published |
+| Docker image | `ghcr.io/avatar-arts/agent-file-ops` | Not published |
+| skills.sh entries | `remote-file-operations` and related names | Catalog targets |
+
+The [discovery manifest](manifests/discovery.json) is the machine-readable source for naming, keywords, and reserved distribution identifiers.
+
 ## Try the repository
 
 ```bash
@@ -139,9 +160,10 @@ Start with:
 3. [Architecture](ARCHITECTURE.md) — system invariants and boundaries.
 4. [Security policy](SECURITY.md) — credential, host-key, path, and execution constraints.
 5. [Foundation audit](AUDIT_REPORT.md) — what is demonstrated, what is partial, and what remains.
-6. [Visual gallery](docs/assets/README.md) — product imagery, typography, and campaign guidance.
-7. [Design system](docs/DESIGN_SYSTEM.md) — colors, components, layouts, and SVG references.
-8. [Dashboard](docs/site/index.html) — current evidence posture and documentation links.
+6. [Discovery manifest](manifests/discovery.json) — canonical naming, package targets, and search vocabulary.
+7. [Visual gallery](docs/assets/README.md) — product imagery, typography, and campaign guidance.
+8. [Design system](docs/DESIGN_SYSTEM.md) — colors, components, layouts, and SVG references.
+9. [Dashboard](docs/site/index.html) — current evidence posture and documentation links.
 
 ## Repository layout
 
@@ -185,6 +207,14 @@ Before changing protocol or implementation behavior:
 4. Run the narrowest relevant validator, then the broader suite.
 5. Record actual verification evidence.
 6. Keep credentials and secret material out of source, fixtures, logs, and commits.
+
+## Naming history
+
+The project began as `hostinger-file-bridge`, was generalized briefly under the working name `AgentFS`, and was renamed to **AgentFileOps** after collision research. Historical ADR and specification filenames may retain `agentfs` when they document that evolution.
+
+## Source architecture
+
+The original product-design checkpoint is preserved at [the AgentFileOps product-design specification](docs/superpowers/specs/2026-08-18-agentfs-product-design.md). New implementation and distribution identifiers use `AgentFileOps` / `agent-file-ops`.
 
 ## License
 
