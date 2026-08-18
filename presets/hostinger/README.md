@@ -1,6 +1,6 @@
 # Hostinger preset
 
-Hostinger is an AgentFS provider recipe, not an AgentFS product boundary.
+Hostinger is an AgentFileOps provider recipe, not an AgentFileOps product boundary.
 
 This preset exists to document common Hostinger SSH/SFTP configuration patterns and migration from `AvaTar-ArTs/hostinger-file-bridge`.
 
@@ -20,6 +20,6 @@ aliases:
 
 Never commit credentials, passwords, private keys, passphrases, or unverified host keys.
 
-AgentFS must discover actual capabilities at runtime rather than assuming every Hostinger plan has identical shell access or path namespaces.
+AgentFileOps must discover actual capabilities at runtime rather than assuming every Hostinger plan has identical shell access or path namespaces.
 
-The previous Hostinger File Bridge research remains useful for SFTP, transfer tickets, archive safety, sync planning, and account-scoped path semantics, but Python-specific or one-root assumptions are not canonical AgentFS behavior.
+The previous Hostinger File Bridge research remains useful for SFTP, transfer tickets, archive safety, sync planning, and account-scoped path semantics, but Python-specific or one-root assumptions are not canonical AgentFileOps behavior.
