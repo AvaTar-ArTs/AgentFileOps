@@ -1,6 +1,6 @@
-# AgentFS Protocol
+# AgentFileOps Protocol
 
-The AgentFS protocol is the canonical behavioral contract for remote filesystem operations. Runtime languages, MCP tools, CLI commands, SDKs, skills, and provider presets must translate this contract without redefining it.
+The AgentFileOps protocol is the canonical behavioral contract for remote filesystem operations. Runtime languages, MCP tools, CLI commands, SDKs, skills, and provider presets must translate this contract without redefining it.
 
 ## Protocol invariants
 
@@ -15,6 +15,7 @@ The AgentFS protocol is the canonical behavioral contract for remote filesystem 
 9. Large binary transfers use streams/tickets rather than MCP JSON/base64.
 10. Mutations emit redacted audit events.
 11. Implementations may accelerate operations internally with shell capabilities, but shell acceleration must not change the protocol result or safety contract.
+12. Active protocol metadata and implementation identifiers use AgentFileOps naming; AgentFS is historical only.
 
 ## Schemas
 
