@@ -1,4 +1,4 @@
-name: AgentFS Foundation
+name: AgentFileOps Foundation
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate foundation contracts
+      - name: Validate AgentFileOps foundation contracts
         run: python scripts/validate_foundation.py
 
   source-lock-review:
@@ -42,5 +42,5 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Run Rust workspace tests
         run: cargo test --workspace --all-targets
-      - name: Run black-box AgentFS conformance tests
+      - name: Run black-box AgentFileOps conformance tests
         run: python -m pytest tests/conformance/test_vertical_slice_01.py -v
