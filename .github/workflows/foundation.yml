@@ -40,5 +40,7 @@ jobs:
         with:
           python-version: '3.12'
       - uses: dtolnay/rust-toolchain@stable
+      - name: Run Rust workspace tests
+        run: cargo test --workspace --all-targets
       - name: Run black-box AgentFS conformance tests
         run: python -m pytest tests/conformance/test_vertical_slice_01.py -v
