@@ -1,8 +1,8 @@
-# AgentFS Ecosystem Review
+# AgentFileOps Ecosystem Review
 
 ## Purpose
 
-This review applies the AvaTar-ArTs agent/skill ecosystem to AgentFS before runtime implementation. The goal is to preserve useful boundaries across languages and hosts instead of allowing each package to invent its own interpretation of AgentFS.
+This review applies the AvaTar-ArTs agent/skill ecosystem to AgentFileOps before runtime implementation. The goal is to preserve useful boundaries across languages and hosts instead of allowing each package to invent its own interpretation of AgentFileOps.
 
 ## Sources reviewed
 
@@ -12,14 +12,14 @@ Pinned source identities are recorded in `manifests/source-lock.json`.
 
 Relevant control-plane roles:
 
-- `superagents.orchestrator` — normalize requests, select capabilities, apply approval boundaries, produce execution plans.
-- `superagents.verifier` — inspect artifacts and require evidence before completion claims.
+- `superagents.orchestrator`: normalize requests, select capabilities, apply approval boundaries, produce execution plans.
+- `superagents.verifier`: inspect artifacts and require evidence before completion claims.
 
 Relevant runtime assets include routing, policy, execution/audit schemas, catalog validation, catalog locks, and changelog checks.
 
 ### superSkills
 
-Curated contracts directly relevant to AgentFS:
+Curated contracts directly relevant to AgentFileOps:
 
 - `process.brainstorming`
 - `process.test-driven-development`
@@ -29,7 +29,7 @@ Curated contracts directly relevant to AgentFS:
 - `integration.catalog-synchronization`
 - `release.changelog-discipline`
 
-AgentFS adds product-specific skills beneath `skills/`, but those skills must compose with these process contracts rather than replacing them.
+AgentFileOps adds product-specific skills beneath `skills/`, but those skills must compose with these process contracts rather than replacing them.
 
 ### agent-skills specialist bench
 
@@ -46,11 +46,11 @@ Mandatory review lenses:
 
 ### 1. Protocol must remain the stable unit
 
-AgentFS should follow Capability Atlas logic: preserve the canonical function and treat Rust, TypeScript, Go, Python, MCP, CLI, and skills as host-specific renderings. No implementation language owns semantics.
+AgentFileOps follows Capability Atlas logic: preserve the canonical function and treat Rust, TypeScript, Go, Python, MCP, CLI, and skills as host-specific renderings. No implementation language owns semantics.
 
 ### 2. Orchestration and verification are separate responsibilities
 
-The project should not let the same layer both perform a risky filesystem mutation and decide that its own result is trustworthy. Planning/risk classification, execution, and verification should remain explicit stages.
+The project must not let the same layer both perform a risky filesystem mutation and decide that its own result is trustworthy. Planning/risk classification, execution, and verification remain explicit stages.
 
 ### 3. Security belongs in the protocol contract
 
@@ -66,38 +66,42 @@ Hostinger, cPanel, Plesk, generic VPS, and NAS support should be configuration/d
 
 ### 6. Skills carry procedure, not runtime authority
 
-AgentFS skills should teach safe operator behavior: inspect before mutation, prefer aliases when known, use explicit absolute mode intentionally, dry-run recursive work, verify checksums, preview sync deletion, inspect archives, and preserve audit evidence. Skills must never embed credentials or silently bypass runtime policy.
+AgentFileOps skills teach safe operator behavior: inspect before mutation, prefer aliases when known, use explicit absolute mode intentionally, dry-run recursive work, verify checksums, preview sync deletion, inspect archives, and preserve audit evidence. Skills must never embed credentials or silently bypass runtime policy.
 
-## AgentFS review gates
+## AgentFileOps review gates
 
 Every major implementation slice should pass these gates:
 
-1. **Orchestrator gate** — request mapped to canonical AgentFS capability and surfaces.
-2. **Architecture gate** — implementation does not move protocol semantics into a host-specific package.
-3. **Security gate** — threat boundaries and destructive behavior reviewed.
-4. **TDD/conformance gate** — failing contract test exists before implementation and shared fixtures are updated when protocol changes.
-5. **Code-review gate** — implementation compared to spec/plan; deviations classified.
-6. **Verifier gate** — fresh commands/evidence captured before completion or release claims.
-7. **Changelog gate** — public behavior changes recorded.
+1. **Orchestrator gate**: request mapped to canonical AgentFileOps capability and surfaces.
+2. **Architecture gate**: implementation does not move protocol semantics into a host-specific package.
+3. **Security gate**: threat boundaries and destructive behavior reviewed.
+4. **TDD/conformance gate**: failing contract test exists before implementation and shared fixtures are updated when protocol changes.
+5. **Code-review gate**: implementation compared to spec/plan; deviations classified.
+6. **Verifier gate**: fresh commands/evidence captured before completion or release claims.
+7. **Changelog gate**: public behavior changes recorded.
 
-## Recommended AgentFS-specific agents
+## Recommended AgentFileOps-specific agents
 
-- `agentfs.orchestrator`
-- `agentfs.protocol-architect`
-- `agentfs.security-reviewer`
-- `agentfs.conformance-verifier`
+- `agentfileops.orchestrator`
+- `agentfileops.protocol-architect`
+- `agentfileops.security-reviewer`
+- `agentfileops.conformance-verifier`
 
 Their machine-readable definitions are in `manifests/agents.json`.
 
-## Recommended AgentFS-specific skills
+## Recommended AgentFileOps-specific skills
 
-- `agentfs.remote-filesystem`
-- `agentfs.safe-remote-deploy`
-- `agentfs.remote-sync`
-- `agentfs.artifact-publisher`
-- `agentfs.protocol-conformance`
+- `agentfileops.remote-filesystem`
+- `agentfileops.safe-remote-deploy`
+- `agentfileops.remote-sync`
+- `agentfileops.artifact-publisher`
+- `agentfileops.protocol-conformance`
 
 The first operator and conformance skills are scaffolded in this repository. Remaining skills should be added as their runtime capabilities become real and testable.
+
+## Naming hygiene gate
+
+Active product, package, agent, skill, daemon, CI, and documentation surfaces use `AgentFileOps`, `agent-file-ops`, or `agentfileops` according to host conventions. `AgentFS` is allowed only in historical ADRs, migration records, or source filenames whose purpose is to preserve the rename history.
 
 ## Drift rule
 
