@@ -132,8 +132,8 @@ def main() -> int:
             raise SystemExit(
                 f"raw secret field forbidden in SSH transport schema: {forbidden_secret_field}"
             )
-    read_limit = ssh_transport["properties"]["inline_read_bytes"]
-    if read_limit.get("maximum") != 16_777_216 or read_limit.get("default") != 1_048_576:
+    read_limit = ssh_transport["properties"]["inline_read_bytes"]["properties"]
+    if read_limit["maximum"].get("default") != 16_777_216 or read_limit["default"].get("default") != 1_048_576:
         raise SystemExit("SSH inline read bounds drifted from canonical contract")
 
     connection_schema = load_json("protocol/schema/connection.schema.json")
