@@ -1,14 +1,14 @@
 # Rust implementation family
 
-Rust is the recommended canonical high-performance engine implementation, not the definition of AgentFS itself.
+Rust is the recommended canonical high-performance engine implementation, not the definition of AgentFileOps itself.
 
 Planned workspace crates:
 
-- `agentfs-core` — logical operations, planning, risk, normalized results
-- `agentfs-ssh` — SSH/SFTP transport and constrained acceleration
-- `agentfs-archive` — archive inspection/safety/execution
-- `agentfs-sync` — manifests, diffing, synchronization
-- `agentfs-cli` — native CLI over the same operation contracts
+- `agent-file-ops-core`: logical operations, planning, risk, normalized results
+- `agent-file-ops-ssh`: SSH/SFTP transport and constrained acceleration
+- `agent-file-ops-archive`: archive inspection/safety/execution
+- `agent-file-ops-sync`: manifests, diffing, synchronization
+- `agent-file-ops-cli`: native CLI over the same operation contracts
 
 Rules:
 
@@ -17,3 +17,4 @@ Rules:
 3. No public arbitrary-shell API.
 4. Shared conformance fixtures decide semantic parity.
 5. Protocol changes are reviewed before Rust behavior becomes canonical by precedent.
+6. Active crate/package identifiers use the `agent-file-ops-*` namespace.
