@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "product": "AgentFileOps",
+  "tagline": "Give agents files, not a shell.",
+  "category_phrase": "Remote File Operations for AI Agents",
+  "seo_subtitle": "Safe Remote Filesystem, SSH/SFTP, Sync & Deployment Operations for AI Agents",
+  "short_description": "Safety-first remote filesystem operations for AI agents and MCP clients.",
+  "long_description": "AgentFileOps is a safety-first remote filesystem, SSH/SFTP, file transfer, sync, archive, deployment, artifact publishing, checksum, approval, and audit layer for AI agents and MCP clients without arbitrary shell access.",
+  "positioning": [
+    "Remote file operations without handing your agent a shell.",
+    "Structured filesystem capabilities instead of arbitrary shell execution.",
+    "Protocol-first remote file operations across MCP, CLI, SDKs, daemons, and skills."
+  ],
+  "github": {
+    "repository": "AvaTar-ArTs/AgentFileOps",
+    "description": "Safety-first remote filesystem operations for AI agents and MCP clients. SSH/SFTP, file transfer, sync, archives, deployments, approvals and audit logs without arbitrary shell access.",
+    "topics": [
+      "ai-agents",
+      "mcp",
+      "model-context-protocol",
+      "remote-filesystem",
+      "ssh",
+      "sftp",
+      "file-transfer",
+      "remote-server",
+      "deployment",
+      "sync",
+      "devops",
+      "agent-tools",
+      "filesystem",
+      "automation",
+      "security"
+    ]
+  },
+  "npm": {
+    "bootstrap": "@avatar-arts/agent-file-ops",
+    "packages": [
+      "@avatar-arts/agent-file-ops",
+      "@avatar-arts/agent-file-ops-mcp",
+      "@avatar-arts/agent-file-ops-client",
+      "@avatar-arts/agent-file-ops-schema"
+    ],
+    "keywords": [
+      "mcp",
+      "model-context-protocol",
+      "ai-agent",
+      "agents",
+      "remote-filesystem",
+      "filesystem",
+      "ssh",
+      "sftp",
+      "file-transfer",
+      "remote-server",
+      "remote-file-operations",
+      "sync",
+      "deployment",
+      "devops",
+      "automation",
+      "secure-filesystem",
+      "agent-tools",
+      "artifact-publishing"
+    ]
+  },
+  "rust": {
+    "crates": [
+      "agent-file-ops-core",
+      "agent-file-ops-cli"
+    ],
+    "cli": "afo"
+  },
+  "python": {
+    "package": "agent-file-ops"
+  },
+  "go": {
+    "module_label": "agent-file-ops-go",
+    "daemon": "agent-file-opsd"
+  },
+  "docker": {
+    "image": "ghcr.io/avatar-arts/agent-file-ops"
+  },
+  "mcp": {
+    "display_name": "AgentFileOps",
+    "category": "remote filesystem operations",
+    "keywords": [
+      "filesystem-mcp",
+      "remote-filesystem",
+      "ssh",
+      "sftp",
+      "file-transfer",
+      "remote-server",
+      "sync",
+      "deployment",
+      "safe-file-operations"
+    ]
+  },
+  "skills_sh": {
+    "discovery_names": [
+      "remote-file-operations",
+      "safe-remote-filesystem",
+      "ssh-sftp-file-management",
+      "remote-deploy",
+      "artifact-publisher",
+      "remote-sync",
+      "server-file-management"
+    ],
+    "primary": "remote-file-operations"
+  },
+  "search_phrases": [
+    "remote file operations",
+    "remote filesystem MCP",
+    "filesystem MCP",
+    "remote files AI agent",
+    "SSH MCP file transfer",
+    "SFTP AI agent",
+    "AI agent remote server files",
+    "safe remote filesystem",
+    "server file management agent",
+    "remote sync AI agent",
+    "remote deployment MCP",
+    "artifact publishing AI agent"
+  ],
+  "avoid_as_primary_brand": [
+    "AgentFS",
+    "RemoteFS",
+    "AgentBridge",
+    "FileWarden"
+  ]
+}
