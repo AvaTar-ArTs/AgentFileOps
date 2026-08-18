@@ -1,11 +1,11 @@
 ---
 name: protocol-conformance
-description: Preserve canonical AgentFS behavior across Rust, TypeScript, Go, Python, MCP, CLI, skills, and provider presets. Use when adding or changing a capability, translating it to another surface, reviewing parity, or diagnosing behavioral drift.
+description: Preserve canonical AgentFileOps behavior across Rust, TypeScript, Go, Python, MCP, CLI, skills, and provider presets. Use when adding or changing a capability, translating it to another surface, reviewing parity, or diagnosing behavioral drift.
 ---
 
-# AgentFS Protocol Conformance
+# AgentFileOps Protocol Conformance
 
-Treat the AgentFS protocol as authoritative and every runtime/package as a rendering of that contract.
+Treat the AgentFileOps protocol as authoritative and every runtime/package as a rendering of that contract.
 
 ## Canonical workflow
 
@@ -45,6 +45,7 @@ For each changed capability, record:
 - Do not flatten safety behavior to accommodate a weaker host surface without documenting the delta.
 - Protocol-breaking changes require explicit versioning and changelog entries.
 - If two implementations disagree and the protocol is ambiguous, stop and resolve the protocol through design/ADR before merging either behavior as canonical.
+- Active identifiers use `AgentFileOps`, `agent-file-ops`, or `agentfileops` according to the host surface. `AgentFS` may appear only in historical migration or naming records.
 
 ## Completion standard
 
