@@ -52,3 +52,7 @@ Sync is a manifest-driven reconciliation process. It is not an implicit mirror a
 ## Failure behavior
 
 Stop on endpoint ambiguity, unsupported direction, changed target state, checksum mismatch, or an unapproved deletion. Preserve the manifest and diff for review.
+
+## Verification
+
+Run the sync dry-run and compare the approved fingerprint with the post-reconciliation manifest. Record counts, conflicts, deletions, and the resulting audit event.
