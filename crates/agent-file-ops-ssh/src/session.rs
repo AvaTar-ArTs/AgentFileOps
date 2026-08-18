@@ -1,4 +1,6 @@
-use crate::{CredentialRef, SshTransportConfig, StrictHostKeyVerifier, TransportError};
+use crate::{
+    AgentFileOpsSftp, CredentialRef, SshTransportConfig, StrictHostKeyVerifier, TransportError,
+};
 use russh::client;
 use russh::keys::agent::{client::AgentClient, AgentIdentity};
 use russh::keys::{load_secret_key, PrivateKeyWithHashAlg, PublicKey};
@@ -34,6 +36,7 @@ impl client::Handler for StrictClientHandler {
 pub struct AgentFileOpsSshSession {
     handle: client::Handle<StrictClientHandler>,
     operation_timeout: std::time::Duration,
+    inline_read_bytes: u64,
 }
 
 impl AgentFileOpsSshSession {
@@ -72,6 +75,7 @@ impl AgentFileOpsSshSession {
         Ok(Self {
             handle,
             operation_timeout: config.operation_timeout,
+            inline_read_bytes: config.inline_read_bytes,
         })
     }
 
@@ -79,7 +83,7 @@ impl AgentFileOpsSshSession {
         self.handle.is_closed()
     }
 
-    pub async fn open_sftp(&self) -> Result<SftpSession, TransportError> {
+    pub async fn open_sftp(&self) -> Result<AgentFileOpsSftp, TransportError> {
         let channel = tokio::time::timeout(
             self.operation_timeout,
             self.handle.channel_open_session(),
@@ -96,9 +100,11 @@ impl AgentFileOpsSshSession {
         .map_err(|_| TransportError::ConnectionTimeout)?
         .map_err(map_russh_error)?;
 
-        SftpSession::new(channel.into_stream())
+        let sftp = SftpSession::new(channel.into_stream())
             .await
-            .map_err(|error| TransportError::Sftp(error.to_string()))
+            .map_err(|error| TransportError::Sftp(error.to_string()))?;
+        sftp.set_timeout(self.operation_timeout.as_secs().max(1));
+        Ok(AgentFileOpsSftp::new(sftp, self.inline_read_bytes))
     }
 
     pub async fn close(self) -> Result<(), TransportError> {
