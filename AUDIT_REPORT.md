@@ -2,7 +2,7 @@
 
 **Audit date:** 2026-08-18  
 **Branch:** main  
-**Audited commit:** 804dc0bc38a5e642261bdac2f8cabb95d40f6364  
+**Audited commit:** d42090262622948e752a557ed2f14df67a7cbc6a  
 **Verdict:** Foundation is credible; production readiness is not established.
 
 ## Executive summary
