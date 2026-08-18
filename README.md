@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://github.com/AvaTar-ArTs/AgentFileOps/actions/workflows/foundation.yml"><img src="https://github.com/AvaTar-ArTs/AgentFileOps/actions/workflows/foundation.yml/badge.svg?branch=main" alt="Foundation CI"></a>
   <a href="https://github.com/AvaTar-ArTs/AgentFileOps/actions/workflows/pages.yml"><img src="https://github.com/AvaTar-ArTs/AgentFileOps/actions/workflows/pages.yml/badge.svg?branch=main" alt="Pages deployment"></a>
-  <a href="https://img.shields.io/badge/status-foundation%20in%20progress-00C8FF"><img src="https://img.shields.io/badge/status-foundation%20in%20progress-00C8FF" alt="Foundation in progress"></a>
+  <a href="AUDIT_REPORT.md"><img src="https://img.shields.io/badge/status-foundation%20in%20progress-00C8FF" alt="Foundation in progress"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-108040" alt="MIT License"></a>
 </p>
 
@@ -26,19 +26,32 @@ A shell asks an agent to invent commands. AgentFileOps asks an agent to declare 
 The protocol turns remote file work into a reviewable lifecycle:
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Agent intent] --> B[Semantic operation]
-    B --> C[Resolve path and capability]
-    C --> D[Classify risk and approval]
-    D --> E[Execute through backend]
-    E --> F[Verify result and audit]
+    B --> C[Path and capability resolution]
+    C --> D[Risk and approval]
+    D --> E[Backend execution]
+    E --> F[Verified result and audit]
 ```
 
 This gives agents structured filesystem capabilities—list, stat, find, read, write, transfer, manage, archive, and sync—without exposing a public arbitrary `exec(command)` surface.
 
+### Capability map
+
+| Surface | Purpose |
+|---|---|
+| [Protocol schemas](protocol/) | Canonical operation contracts |
+| [Rust core](crates/agent-file-ops-core/) | Path, risk, connection, and strategy logic |
+| [Skills](skills/) | Agent-facing procedural guidance |
+| [Conformance tests](tests/conformance/) | Behavioral evidence |
+| [SSH/SFTP layer](crates/agent-file-ops-ssh/) | Transport implementation surface |
+| [Dashboard](docs/site/index.html) | Current evidence posture |
+
 ## What it is for
 
 ![Provider-neutral destinations](docs/assets/generated/agentfileops-use-cases.png)
+
+Use the [visual legend](docs/assets/use-case-legend.svg) beside this image when explaining the blue input path, green approved paths, and amber review-required branch.
 
 AgentFileOps is designed for:
 
@@ -48,6 +61,13 @@ AgentFileOps is designed for:
 - operators who need plans, approvals, fingerprints, and audit events around mutations.
 
 The protocol is provider-neutral. Hostinger is a research and migration source, not the product boundary.
+
+
+## How the guard works
+
+The product-specific visual below shows the intended semantic boundary: an operation packet enters pre-flight, passes through review policy, travels over SSH/SFTP, and produces either an approved filesystem result or a blocked mutation with an audit record.
+
+![AgentFileOps protocol, pre-flight, SSH/SFTP, and audit flow](docs/assets/generated/agentfileops-protocol-hero.png)
 
 ## Safety is part of the operation
 
@@ -125,19 +145,19 @@ Start with:
 
 ## Repository layout
 
-```
-protocol/       canonical schemas and examples
-crates/         Rust implementation family
-packages/       TypeScript, npm, and MCP surfaces
-cmd/            deployable daemons
-sdk/            language SDKs
-skills/         agent procedural guidance
-presets/        provider recipes; never credentials
-manifests/      discovery, capability, and source-lock contracts
-docs/           architecture, ecosystem, verification, design, and visuals
-tests/          conformance and integration fixtures
-.github/        CI and Pages workflows
-```
+| Directory | Role |
+|---|---|
+| [protocol/](protocol/) | Canonical schemas and examples |
+| [crates/](crates/) | Rust implementation family |
+| [packages/](packages/) | TypeScript, npm, and MCP surfaces |
+| [cmd/](cmd/) | Deployable daemons |
+| [sdk/](sdk/) | Language SDKs |
+| [skills/](skills/) | Agent procedural guidance |
+| [presets/](presets/) | Provider recipes; never credentials |
+| [manifests/](manifests/) | Discovery, capability, and source-lock contracts |
+| [docs/](docs/) | Architecture, ecosystem, verification, design, and visuals |
+| [tests/](tests/) | Conformance and integration fixtures |
+| [.github/](.github/) | CI and Pages workflows |
 
 ## How the agent ecosystem fits
 
