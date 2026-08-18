@@ -109,3 +109,10 @@ def test_unknown_operation_fails_closed():
     assert proc.returncode != 0
     error = json.loads(proc.stderr)
     assert error["code"] == "unknown_operation"
+
+
+def test_overlong_path_fails_closed():
+    proc = run_cli("normalize-path", "--base", "home", "--path", "a" * 4097)
+    assert proc.returncode != 0
+    error = json.loads(proc.stderr)
+    assert error["code"] == "invalid_path"

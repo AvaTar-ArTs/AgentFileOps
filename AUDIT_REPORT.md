@@ -5,6 +5,10 @@
 **Audited commit:** d42090262622948e752a557ed2f14df67a7cbc6a  
 **Verdict:** Foundation is credible; production readiness is not established.
 
+## Status addendum
+
+Since this audit was recorded, Vertical Slice 02 has been implemented and verified as a network-free semantic contract for connection resolution, alias/path safety, and backend strategy selection. The audit's VS02 placeholder findings are historical. Vertical Slice 03 and live SSH/SFTP integration remain incomplete, so the production-readiness verdict still stands.
+
 ## Executive summary
 
 AgentFileOps has a coherent protocol-first architecture, a real Rust workspace, canonical JSON schemas, safety-oriented path/risk logic, pinned ecosystem provenance, and a useful documentation surface.

@@ -9,6 +9,8 @@ pub use strategy::{select_backend_strategy, BackendStrategy};
 use serde::Serialize;
 use thiserror::Error;
 
+pub const MAX_PATH_BYTES: usize = 4096;
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct NormalizedPath {
     pub base: String,
@@ -70,7 +72,7 @@ pub fn normalize_path(
     path: &str,
     follow_symlinks: bool,
 ) -> Result<NormalizedPath, AgentFileOpsError> {
-    if path.contains('\0') {
+    if path.len() > MAX_PATH_BYTES || path.contains('\0') {
         return Err(AgentFileOpsError::InvalidPath);
     }
 
@@ -156,6 +158,15 @@ mod tests {
         assert_eq!(
             classify_risk("shell-anything"),
             Err(AgentFileOpsError::UnknownOperation("shell-anything".into()))
+        );
+    }
+
+    #[test]
+    fn rejects_overlong_paths() {
+        let path = "a".repeat(MAX_PATH_BYTES + 1);
+        assert_eq!(
+            normalize_path("home", &path, false),
+            Err(AgentFileOpsError::InvalidPath)
         );
     }
 }

@@ -83,11 +83,12 @@ Safety boundaries:
 - discovery, source-lock, capability, and skill manifests;
 - foundation and skill validators;
 - Vertical Slice 01 behavioral tests;
+- Vertical Slice 02 connection/path/backend strategy tests;
 - architecture, security, audit, design, and visual documentation.
 
 ### In progress
 
-- connection and backend-strategy conformance;
+- live SSH/SFTP connection and backend execution;
 - real SSH/SFTP transport behavior;
 - strict host-key verification implementation;
 - bounded remote reads and additive writes;
@@ -122,7 +123,7 @@ python -m pytest tests/conformance/test_vertical_slice_01.py \
   tests/conformance/test_vertical_slice_03.py -v -ra
 ```
 
-Vertical Slices 02 and 03 currently contain explicit skipped placeholders. They are visible evidence of incomplete scope, not passing proof of finished runtime behavior.
+Vertical Slice 02 is implemented as a semantic, no-network conformance slice. Vertical Slice 03 remains an explicit skipped placeholder until live SSH/SFTP operations and integration fixtures are available.
 
 ## Read next
 
@@ -132,6 +133,7 @@ Vertical Slices 02 and 03 currently contain explicit skipped placeholders. They 
 | What are the system boundaries? | [Architecture](ARCHITECTURE.md) |
 | What is forbidden or safety-sensitive? | [Security policy](SECURITY.md) |
 | What is actually demonstrated? | [Foundation audit](AUDIT_REPORT.md) |
+| How does it compare with adjacent tools? | [Comparator review](docs/research/COMPARATOR_REVIEW.md) |
 | What names and package targets are reserved? | [Discovery manifest](manifests/discovery.json) |
 | How are agent skills defined? | [Skill contracts](skills/) |
 | What are the visual assets and their authority boundaries? | [Visual gallery](docs/assets/README.md) |

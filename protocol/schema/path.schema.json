@@ -13,7 +13,9 @@
     },
     "path": {
       "type": "string",
-      "description": "Path relative to base or absolute"
+      "maxLength": 4096,
+      "pattern": "^[^\\u0000]*$",
+      "description": "Path relative to base or absolute; NUL bytes are forbidden and paths are bounded to 4096 bytes"
     },
     "follow_symlinks": {
       "type": "boolean",

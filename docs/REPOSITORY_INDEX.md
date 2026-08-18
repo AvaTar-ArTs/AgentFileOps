@@ -11,6 +11,7 @@ This index is the map for the current main branch. It separates what exists, wha
 5. [Audit report](../AUDIT_REPORT.md) — evidence-based readiness assessment.
 6. [Discovery manifest](../manifests/discovery.json) — canonical naming and distribution vocabulary.
 6. [Changelog](../CHANGELOG.md) — historical changes and verification notes.
+7. [Comparator review](research/COMPARATOR_REVIEW.md) — adjacent implementations and design boundaries.
 
 ## Inventory
 
@@ -20,7 +21,8 @@ This index is the map for the current main branch. It separates what exists, wha
 | Rust core | crates/agent-file-ops-core/ | path, risk, connection, strategy logic | implemented foundation |
 | CLI | crates/agent-file-ops-cli/ | JSON command/conformance surface | implemented foundation |
 | SSH/SFTP | crates/agent-file-ops-ssh/ | transport configuration and operations | partial |
-| Tests | tests/ | black-box and integration evidence | VS01 real; VS02/03 incomplete |
+| Tests | tests/ | black-box and integration evidence | VS01/02 real; VS03 incomplete |
+| Research | docs/research/ | comparator analysis and bounded design decisions | current review |
 | Validation | scripts/validate_foundation.py, scripts/validate_skills.py, scripts/validate_source_lock.py, scripts/validate_repository_assets.py | foundation, skill, provenance, and asset invariants | executable |
 | Skills | skills/ | agent-facing procedural contracts | present; needs enrichment |
 | Agents | manifests/agents.json | review and verification roles | declared |
