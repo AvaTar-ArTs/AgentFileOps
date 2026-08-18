@@ -40,7 +40,7 @@ impl AgentFileOpsSshSession {
     /// For now, this is a placeholder that validates configuration.
     pub async fn connect(&mut self) -> Result<(), TransportError> {
         // Validate configuration before attempting connection
-        self.config.validate()?;
+        self.config.validate().map_err(TransportError::InvalidConfig)?;
 
         // In a real implementation:
         // - Resolve self.config.known_hosts_ref
