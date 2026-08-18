@@ -22,6 +22,31 @@ REQUIRED = [
     "skills/remote-filesystem/SKILL.md",
     "skills/protocol-conformance/SKILL.md",
     "tests/conformance/README.md",
+    "crates/README.md",
+    "packages/README.md",
+    "sdk/python/README.md",
+    "sdk/go/README.md",
+    "cmd/agent-file-opsd/README.md",
+    "presets/hostinger/README.md",
+    "docs/ecosystem/AGENT_SKILL_REVIEW.md",
+    "docs/verification/VERTICAL_SLICE_01.md",
+]
+
+ACTIVE_NAMING_SURFACES = [
+    "ARCHITECTURE.md",
+    "SECURITY.md",
+    "protocol/README.md",
+    "skills/remote-filesystem/SKILL.md",
+    "skills/protocol-conformance/SKILL.md",
+    "packages/README.md",
+    "crates/README.md",
+    "sdk/python/README.md",
+    "sdk/go/README.md",
+    "cmd/agent-file-opsd/README.md",
+    "presets/hostinger/README.md",
+    "docs/ecosystem/AGENT_SKILL_REVIEW.md",
+    "docs/verification/VERTICAL_SLICE_01.md",
+    ".github/workflows/foundation.yml",
 ]
 
 
@@ -75,17 +100,25 @@ def main() -> int:
         if expected not in skill_ids:
             raise SystemExit(f"missing AgentFileOps skill: {expected}")
 
-    for active_doc in [
-        "ARCHITECTURE.md",
-        "SECURITY.md",
-        "protocol/README.md",
-        "skills/remote-filesystem/SKILL.md",
-        "skills/protocol-conformance/SKILL.md",
-        "packages/README.md",
-    ]:
-        text = (ROOT / active_doc).read_text(encoding="utf-8")
+    for active_surface in ACTIVE_NAMING_SURFACES:
+        text = (ROOT / active_surface).read_text(encoding="utf-8")
         if "AgentFS" in text:
-            raise SystemExit(f"retired AgentFS name found in active surface: {active_doc}")
+            raise SystemExit(
+                f"retired AgentFS name found in active surface: {active_surface}"
+            )
+        if "agentfs" in text.lower():
+            raise SystemExit(
+                f"retired agentfs identifier found in active surface: {active_surface}"
+            )
+
+    retired_paths = [
+        "cmd/agentfsd",
+        "crates/agentfs-core",
+        "crates/agentfs-cli",
+    ]
+    leftovers = [p for p in retired_paths if (ROOT / p).exists()]
+    if leftovers:
+        raise SystemExit(f"retired AgentFS paths still exist: {leftovers}")
 
     print("AgentFileOps foundation validation: PASS")
     return 0
