@@ -12,6 +12,7 @@ SCHEMA_FILES = [
     "protocol/schema/plan.schema.json",
     "protocol/schema/result.schema.json",
     "protocol/schema/audit.schema.json",
+    "protocol/schema/ssh-transport.schema.json",
 ]
 
 REQUIRED = [
@@ -30,6 +31,7 @@ REQUIRED = [
     "skills/remote-sync/SKILL.md",
     "skills/protocol-conformance/SKILL.md",
     "tests/conformance/README.md",
+    "tests/conformance/test_vertical_slice_03.py",
     "crates/README.md",
     "packages/README.md",
     "packages/package-metadata.json",
@@ -40,6 +42,8 @@ REQUIRED = [
     "docs/ecosystem/AGENT_SKILL_REVIEW.md",
     "docs/distribution/DISCOVERY_SEO.md",
     "docs/verification/VERTICAL_SLICE_01.md",
+    "docs/checkpoints/2026-08-18-agentfileops-checkpoint-01.md",
+    "manifests/checkpoint-01.json",
 ]
 
 ACTIVE_NAMING_SURFACES = [
@@ -117,6 +121,25 @@ def main() -> int:
     path_schema = load_json("protocol/schema/path.schema.json")
     if "follow_symlinks" not in path_schema["properties"]:
         raise SystemExit("PathSpec must expose explicit follow_symlinks semantics")
+
+    ssh_transport = load_json("protocol/schema/ssh-transport.schema.json")
+    required_transport = set(ssh_transport.get("required", []))
+    if not {"known_hosts_ref", "credential_ref"}.issubset(required_transport):
+        raise SystemExit("SSH transport must require known_hosts_ref and credential_ref")
+    raw_transport = json.dumps(ssh_transport).lower()
+    for forbidden_secret_field in ["private_key", "password", "passphrase", "secret_value"]:
+        if forbidden_secret_field in raw_transport:
+            raise SystemExit(
+                f"raw secret field forbidden in SSH transport schema: {forbidden_secret_field}"
+            )
+    read_limit = ssh_transport["properties"]["inline_read_bytes"]
+    if read_limit.get("maximum") != 16_777_216 or read_limit.get("default") != 1_048_576:
+        raise SystemExit("SSH inline read bounds drifted from canonical contract")
+
+    connection_schema = load_json("protocol/schema/connection.schema.json")
+    transport_ref = connection_schema["properties"].get("transport", {}).get("$ref")
+    if transport_ref != "ssh-transport.schema.json":
+        raise SystemExit("connection schema must reference SSH transport contract")
 
     source_lock = load_json("manifests/source-lock.json")
     source_ids = {entry["id"] for entry in source_lock["sources"]}
