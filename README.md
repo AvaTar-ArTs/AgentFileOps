@@ -21,7 +21,7 @@
 </p>
 
 > [!WARNING]
-> AgentFileOps is under active development. The foundation contracts and first Rust conformance slice exist; broader SSH/SFTP runtime, SDK, MCP, package, and production-readiness claims remain in progress.
+> AgentFileOps is under active development. The foundation contracts and semantic Rust conformance slices exist; live SSH/SFTP runtime, SDK, MCP, package publication, and production-readiness work remain in progress.
 
 **Category:** Remote File Operations for AI Agents.
 
@@ -31,13 +31,18 @@ A shell asks an agent to invent commands. AgentFileOps asks an agent to declare 
 
 The protocol turns remote file work into a reviewable lifecycle:
 
-```mermaid
-flowchart TD
-    A[Agent intent] --> B[Semantic operation]
-    B --> C[Path and capability resolution]
-    C --> D[Risk and approval]
-    D --> E[Backend execution]
-    E --> F[Verified result and audit]
+```text
+Agent intent
+    ↓
+Semantic operation
+    ↓
+Path and capability resolution
+    ↓
+Risk and approval
+    ↓
+Backend execution
+    ↓
+Verified result and audit
 ```
 
 The protocol is canonical. Rust, CLI, MCP, SDK, daemon, and skills surfaces are replaceable implementations or adapters.
@@ -95,10 +100,10 @@ Safety boundaries:
 - integration fixtures;
 - MCP and SDK adapters.
 
-### Not released
+### Not published as a public runtime
 
 - published npm, Python, Go, or Docker packages;
-- a stable public CLI distribution;
+- GitHub Release assets or package-manager installations;
 - destructive delete, archive, and sync runtime behavior;
 - production-readiness certification.
 
