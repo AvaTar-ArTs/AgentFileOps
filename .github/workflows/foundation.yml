@@ -18,6 +18,8 @@ jobs:
           python-version: '3.12'
       - name: Validate AgentFileOps foundation contracts
         run: python scripts/validate_foundation.py
+      - name: Validate AgentFileOps skill contracts
+        run: python scripts/validate_skills.py
 
   source-lock-review:
     runs-on: ubuntu-latest
