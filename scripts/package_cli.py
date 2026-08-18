@@ -4,12 +4,14 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import platform
 import shutil
 import subprocess
 import tempfile
+import tarfile
 import zipfile
 from pathlib import Path
 
@@ -38,6 +40,37 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def staged_files(staging: Path) -> list[Path]:
+    return [path for path in sorted(staging.rglob("*")) if path.is_file()]
+
+
+def create_zip(archive: Path, staging: Path) -> None:
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+        for path in staged_files(staging):
+            relative = path.relative_to(staging.parent).as_posix()
+            info = zipfile.ZipInfo(relative, date_time=(2020, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            mode = 0o755 if relative.startswith(f"{staging.name}/bin/") else 0o644
+            info.external_attr = mode << 16
+            bundle.writestr(info, path.read_bytes())
+
+
+def create_tar_gz(archive: Path, staging: Path) -> None:
+    with archive.open("wb") as raw:
+        with gzip.GzipFile(fileobj=raw, mode="wb", mtime=0) as compressed:
+            with tarfile.open(fileobj=compressed, mode="w", format=tarfile.PAX_FORMAT) as bundle:
+                for path in staged_files(staging):
+                    relative = path.relative_to(staging.parent).as_posix()
+                    info = bundle.gettarinfo(str(path), arcname=relative)
+                    info.mtime = 0
+                    info.uid = 0
+                    info.gid = 0
+                    info.uname = "root"
+                    info.gname = "root"
+                    with path.open("rb") as handle:
+                        bundle.addfile(info, handle)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "dist")
@@ -58,14 +91,18 @@ def main() -> int:
     identifier = f"agentfileops-cli-{version}-{platform_name()}"
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
-    archive = output_dir / f"{identifier}.zip"
+    archives = [
+        output_dir / f"{identifier}.zip",
+        output_dir / f"{identifier}.tar.gz",
+    ]
+    binary_name = binary.name
 
     manifest = {
         "product": "AgentFileOps",
         "package": "afo-cli",
         "version": version,
         "platform": platform_name(),
-        "binary": "bin/afo",
+        "binary": f"bin/{binary_name}",
         "supported": [
             "path normalization and containment",
             "risk classification",
@@ -78,7 +115,7 @@ def main() -> int:
             "MCP, SDK, and daemon adapters",
             "destructive operations, sync, and recovery",
         ],
-        "sha256": "generated-after-archive",
+        "sha256": "see adjacent checksum files",
     }
 
     with tempfile.TemporaryDirectory(prefix="agentfileops-package-") as temporary:
@@ -93,17 +130,16 @@ def main() -> int:
             json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
         )
 
-        with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
-            for path in sorted(staging.rglob("*")):
-                if path.is_file():
-                    bundle.write(path, path.relative_to(staging.parent))
+        create_zip(archives[0], staging)
+        create_tar_gz(archives[1], staging)
 
-    checksum = sha256(archive)
-    archive.with_suffix(".zip.sha256").write_text(
-        f"{checksum}  {archive.name}\n", encoding="utf-8"
-    )
-    print(f"created {archive}")
-    print(f"sha256 {checksum}")
+    for archive in archives:
+        checksum = sha256(archive)
+        archive.with_name(f"{archive.name}.sha256").write_text(
+            f"{checksum}  {archive.name}\n", encoding="utf-8"
+        )
+        print(f"created {archive}")
+        print(f"sha256 {checksum}")
     return 0
 
 

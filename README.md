@@ -133,7 +133,7 @@ The current release boundary is the verified `afo` policy/conformance CLI. It ca
 python scripts/package_cli.py
 ```
 
-The resulting archive is a small binary package containing `afo`, protocol schemas, security policy, and verification records. See [release scope](RELEASE_SCOPE.md) for the exact production boundary. Live SSH/SFTP and future MCP/SDK/daemon adapters remain experimental.
+The resulting `.zip` and `.tar.gz` archives are small binary packages containing `afo`, protocol schemas, security policy, and verification records. See [release scope](RELEASE_SCOPE.md) for the exact production boundary. Live SSH/SFTP and future MCP/SDK/daemon adapters remain experimental.
 
 ## Read next
 

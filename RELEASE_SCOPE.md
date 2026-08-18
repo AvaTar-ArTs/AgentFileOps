@@ -13,6 +13,8 @@ The supported 0.1 package is the platform-specific `afo` command-line policy and
 
 The package includes the protocol schemas, security policy, and VS01/VS02 verification records needed to understand and validate these behaviors.
 
+The reproducible packager emits both `.zip` and `.tar.gz` archives plus adjacent SHA-256 files. Tagged GitHub Actions builds produce the same artifact family for Ubuntu, macOS, and Windows.
+
 ## Experimental repository components
 
 The following remain source-visible but are not production claims in 0.1:
