@@ -157,6 +157,7 @@ For a complete evidence-based tree and ownership map, see [Repository Index](doc
 | Review source provenance | [manifests/source-lock.json](manifests/source-lock.json) |
 | Review ecosystem roles | [Agent Skill Review](docs/ecosystem/AGENT_SKILL_REVIEW.md) |
 | Review the design language | [Design System](docs/DESIGN_SYSTEM.md) |
+| Study end-to-end operation narratives | [Examples](docs/examples/README.md) |
 | Open the dashboard | [AgentFileOps Dashboard](docs/site/index.html) |
 
 Conformance plans:
