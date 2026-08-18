@@ -162,7 +162,7 @@ def main() -> int:
     skill_ids = {entry["id"] for entry in skills["skills"]}
     for expected in {
         "agentfileops.remote-file-operations",
-        "agentfileops.safe-remote-deploy",
+        "agentfileops.remote-deploy",
         "agentfileops.remote-sync",
         "agentfileops.artifact-publisher",
         "agentfileops.protocol-conformance",
