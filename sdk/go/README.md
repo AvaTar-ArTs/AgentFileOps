@@ -1,6 +1,6 @@
-# AgentFS Go SDK
+# AgentFileOps Go SDK
 
-The Go SDK provides a typed client for AgentFS services and may share models with the `agentfsd` daemon track.
+The Go SDK provides a typed client for AgentFileOps services and may share models with the `agent-file-opsd` daemon track.
 
 Goals:
 
