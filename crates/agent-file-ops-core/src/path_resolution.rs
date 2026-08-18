@@ -31,7 +31,10 @@ fn join_root(root: &str, relative: &str) -> String {
     format!("{root}/{relative}")
 }
 
-fn alias_root<'a>(connection: &'a ConnectionDescriptor, base: &str) -> Result<&'a str, AgentFileOpsError> {
+fn alias_root<'a>(
+    connection: &'a ConnectionDescriptor,
+    base: &str,
+) -> Result<&'a str, AgentFileOpsError> {
     if base == "home" {
         return Ok("");
     }
@@ -124,8 +127,12 @@ mod tests {
 
     #[test]
     fn resolves_alias_in_both_namespaces() {
-        let value = resolve_connection_path(&connection(), "web", "releases/app.zip", false).unwrap();
-        assert_eq!(value.sftp_path, "domains/example.com/public_html/releases/app.zip");
+        let value =
+            resolve_connection_path(&connection(), "web", "releases/app.zip", false).unwrap();
+        assert_eq!(
+            value.sftp_path,
+            "domains/example.com/public_html/releases/app.zip"
+        );
         assert_eq!(
             value.shell_path.as_deref(),
             Some("/home/u1/domains/example.com/public_html/releases/app.zip")

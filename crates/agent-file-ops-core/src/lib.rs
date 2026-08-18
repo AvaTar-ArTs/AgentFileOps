@@ -130,12 +130,8 @@ mod tests {
 
     #[test]
     fn normalizes_relative_segments() {
-        let value = normalize_path(
-            "home",
-            "domains/./avatararts.org/assets/../releases",
-            false,
-        )
-        .unwrap();
+        let value =
+            normalize_path("home", "domains/./avatararts.org/assets/../releases", false).unwrap();
         assert_eq!(value.path, "domains/avatararts.org/releases");
     }
 

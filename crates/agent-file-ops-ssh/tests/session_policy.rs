@@ -16,7 +16,10 @@ fn session_source_exposes_no_generic_exec_api() {
         "pub fn ssh_exec(",
         "pub async fn ssh_exec(",
     ] {
-        assert!(!source.contains(forbidden), "forbidden public API: {forbidden}");
+        assert!(
+            !source.contains(forbidden),
+            "forbidden public API: {forbidden}"
+        );
     }
 }
 

@@ -103,12 +103,8 @@ mod tests {
 
     #[test]
     fn creates_valid_config() {
-        let config = SshTransportConfig::new(
-            "example.com",
-            22,
-            "path/to/known_hosts",
-            "my-ssh-key",
-        );
+        let config =
+            SshTransportConfig::new("example.com", 22, "path/to/known_hosts", "my-ssh-key");
         assert_eq!(config.host, "example.com");
         assert_eq!(config.port, 22);
         assert!(config.validate().is_ok());
@@ -116,13 +112,9 @@ mod tests {
 
     #[test]
     fn clamps_inline_read_limit() {
-        let config = SshTransportConfig::new(
-            "example.com",
-            22,
-            "path/to/known_hosts",
-            "my-ssh-key",
-        )
-        .with_inline_read_limit(100_000_000_000); // way too large
+        let config =
+            SshTransportConfig::new("example.com", 22, "path/to/known_hosts", "my-ssh-key")
+                .with_inline_read_limit(100_000_000_000); // way too large
 
         assert_eq!(config.inline_read_limit.get(), MAX_INLINE_READ_BYTES);
     }

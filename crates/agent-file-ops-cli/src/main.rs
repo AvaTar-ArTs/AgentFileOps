@@ -77,7 +77,10 @@ fn emit_error(error: AgentFileOpsError) -> ! {
         code: error.code(),
         message: error.to_string(),
     };
-    eprintln!("{}", serde_json::to_string(&body).expect("error serialization"));
+    eprintln!(
+        "{}",
+        serde_json::to_string(&body).expect("error serialization")
+    );
     std::process::exit(2);
 }
 
@@ -86,7 +89,10 @@ fn emit_cli_error(code: &'static str, message: impl Into<String>) -> ! {
         code,
         message: message.into(),
     };
-    eprintln!("{}", serde_json::to_string(&body).expect("error serialization"));
+    eprintln!(
+        "{}",
+        serde_json::to_string(&body).expect("error serialization")
+    );
     std::process::exit(2);
 }
 
@@ -94,7 +100,10 @@ fn parse_aliases(values: Vec<String>) -> BTreeMap<String, String> {
     let mut aliases = BTreeMap::new();
     for value in values {
         let Some((name, path)) = value.split_once('=') else {
-            emit_cli_error("invalid_alias", format!("alias must use name=path syntax: {value}"));
+            emit_cli_error(
+                "invalid_alias",
+                format!("alias must use name=path syntax: {value}"),
+            );
         };
         if name.is_empty() {
             emit_cli_error("invalid_alias", "alias name must not be empty");
@@ -112,7 +121,10 @@ fn main() {
             path,
             follow_symlinks,
         } => match normalize_path(&base, &path, follow_symlinks) {
-            Ok(value) => println!("{}", serde_json::to_string(&value).expect("path serialization")),
+            Ok(value) => println!(
+                "{}",
+                serde_json::to_string(&value).expect("path serialization")
+            ),
             Err(error) => emit_error(error),
         },
         Command::ClassifyRisk { operation } => match classify_risk(&operation) {
@@ -121,7 +133,10 @@ fn main() {
                     operation: &operation,
                     risk,
                 };
-                println!("{}", serde_json::to_string(&body).expect("risk serialization"));
+                println!(
+                    "{}",
+                    serde_json::to_string(&body).expect("risk serialization")
+                );
             }
             Err(error) => emit_error(error),
         },

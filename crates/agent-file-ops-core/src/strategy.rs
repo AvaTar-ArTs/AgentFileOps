@@ -7,7 +7,11 @@ pub struct BackendStrategy {
     pub accelerated: bool,
 }
 
-fn accelerated_strategy(operation: &str, capabilities: &ConnectionCapabilities, shell_path_safe: bool) -> Option<&'static str> {
+fn accelerated_strategy(
+    operation: &str,
+    capabilities: &ConnectionCapabilities,
+    shell_path_safe: bool,
+) -> Option<&'static str> {
     if !capabilities.shell || !shell_path_safe {
         return None;
     }
@@ -53,9 +57,9 @@ pub fn select_backend_strategy(
     }
 
     match operation {
-        "copy" | "checksum" | "move" => {
-            Err(AgentFileOpsError::CapabilityUnavailable(operation.to_string()))
-        }
+        "copy" | "checksum" | "move" => Err(AgentFileOpsError::CapabilityUnavailable(
+            operation.to_string(),
+        )),
         other => Err(AgentFileOpsError::UnknownOperation(other.to_string())),
     }
 }
@@ -79,7 +83,8 @@ mod tests {
 
     #[test]
     fn copy_prefers_safe_shell_acceleration() {
-        let result = select_backend_strategy("copy", &capabilities(true, true, &["cp"]), true).unwrap();
+        let result =
+            select_backend_strategy("copy", &capabilities(true, true, &["cp"]), true).unwrap();
         assert_eq!(
             result,
             BackendStrategy {
@@ -91,7 +96,8 @@ mod tests {
 
     #[test]
     fn copy_falls_back_to_sftp_when_shell_mapping_is_unsafe() {
-        let result = select_backend_strategy("copy", &capabilities(true, true, &["cp"]), false).unwrap();
+        let result =
+            select_backend_strategy("copy", &capabilities(true, true, &["cp"]), false).unwrap();
         assert_eq!(
             result,
             BackendStrategy {
@@ -103,7 +109,8 @@ mod tests {
 
     #[test]
     fn checksum_uses_sftp_without_sha256sum() {
-        let result = select_backend_strategy("checksum", &capabilities(true, true, &[]), true).unwrap();
+        let result =
+            select_backend_strategy("checksum", &capabilities(true, true, &[]), true).unwrap();
         assert_eq!(result.strategy, "sftp-hash");
         assert!(!result.accelerated);
     }

@@ -1,6 +1,5 @@
 use agent_file_ops_ssh::{
-    CredentialRef, SshTransportConfig, StrictHostKeyVerifier, TransportError,
-    MAX_INLINE_READ_BYTES,
+    CredentialRef, SshTransportConfig, StrictHostKeyVerifier, TransportError, MAX_INLINE_READ_BYTES,
 };
 
 fn base_config(read_limit: u64) -> Result<SshTransportConfig, TransportError> {
@@ -10,13 +9,10 @@ fn base_config(read_limit: u64) -> Result<SshTransportConfig, TransportError> {
         ));
     }
 
-    Ok(SshTransportConfig::new(
-        "example.test",
-        22,
-        "agentfileops",
-        "env:SSH_PRIVATE_KEY",
+    Ok(
+        SshTransportConfig::new("example.test", 22, "agentfileops", "env:SSH_PRIVATE_KEY")
+            .with_inline_read_limit(read_limit),
     )
-    .with_inline_read_limit(read_limit))
 }
 
 #[test]
@@ -55,13 +51,8 @@ fn missing_known_hosts_file_fails_closed() {
     let dir = tempfile::tempdir().expect("tempdir");
     let missing = dir.path().join("does-not-exist");
 
-    let result = StrictHostKeyVerifier::verify(
-        "example.test",
-        22,
-        "ssh-ed25519",
-        "AAAA...",
-        missing,
-    );
+    let result =
+        StrictHostKeyVerifier::verify("example.test", 22, "ssh-ed25519", "AAAA...", missing);
     assert!(matches!(
         result,
         Err(TransportError::KnownHostsUnavailable(_))
@@ -74,12 +65,7 @@ fn existing_known_hosts_file_initializes_verifier() {
     let known_hosts = dir.path().join("known_hosts");
     std::fs::write(&known_hosts, "").expect("write known_hosts");
 
-    let result = StrictHostKeyVerifier::verify(
-        "example.test",
-        2222,
-        "ssh-ed25519",
-        "AAAA...",
-        known_hosts,
-    );
+    let result =
+        StrictHostKeyVerifier::verify("example.test", 2222, "ssh-ed25519", "AAAA...", known_hosts);
     assert!(matches!(result, Err(TransportError::UnknownHostKey { .. })));
 }

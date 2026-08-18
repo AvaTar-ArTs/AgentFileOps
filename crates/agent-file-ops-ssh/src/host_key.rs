@@ -34,10 +34,7 @@ impl StrictHostKeyVerifier {
 
         // Read known_hosts file
         let content = std::fs::read_to_string(path).map_err(|e| {
-            TransportError::KnownHostsUnavailable(format!(
-                "failed to read known_hosts: {}",
-                e
-            ))
+            TransportError::KnownHostsUnavailable(format!("failed to read known_hosts: {}", e))
         })?;
 
         // Parse known_hosts and search for matching entry
@@ -143,13 +140,8 @@ mod tests {
         writeln!(temp, "[other.com]:22 ssh-ed25519 AAAA...").unwrap();
         temp.flush().unwrap();
 
-        let result = StrictHostKeyVerifier::verify(
-            "example.com",
-            22,
-            "ssh-ed25519",
-            "AAAA...",
-            temp.path(),
-        );
+        let result =
+            StrictHostKeyVerifier::verify("example.com", 22, "ssh-ed25519", "AAAA...", temp.path());
 
         assert!(matches!(result, Err(TransportError::UnknownHostKey { .. })));
     }

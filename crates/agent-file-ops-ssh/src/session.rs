@@ -65,7 +65,10 @@ impl AgentFileOpsSshSession {
     /// Perform a credential reference lookup (mock for now).
     ///
     /// Real implementation would resolve env vars, vault paths, etc.
-    pub fn resolve_credential_ref(&self, _cred_ref: &CredentialRef) -> Result<String, TransportError> {
+    pub fn resolve_credential_ref(
+        &self,
+        _cred_ref: &CredentialRef,
+    ) -> Result<String, TransportError> {
         // Placeholder: in production, resolve from secure store
         Err(TransportError::AgentUnavailable(
             "credential resolution not yet implemented".to_string(),
