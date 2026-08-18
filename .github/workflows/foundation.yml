@@ -31,3 +31,14 @@ jobs:
           for source in data['sources']:
               print(source['id'], source.get('repository'), source.get('commit','unversioned'))
           PY
+
+  vertical-slice-01:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Run black-box AgentFS conformance tests
+        run: python -m pytest tests/conformance/test_vertical_slice_01.py -v
