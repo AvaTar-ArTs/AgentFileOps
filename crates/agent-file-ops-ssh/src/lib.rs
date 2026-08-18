@@ -2,11 +2,13 @@ mod config;
 mod credentials;
 mod host_key;
 mod session;
+mod sftp_ops;
 
 pub use config::{SshTransportConfig, MAX_INLINE_READ_BYTES};
 pub use credentials::CredentialRef;
 pub use host_key::StrictHostKeyVerifier;
 pub use session::AgentFileOpsSshSession;
+pub use sftp_ops::{AgentFileOpsSftp, RemoteEntry, RemoteFileType, RemoteStat, WriteResult};
 
 use thiserror::Error;
 
