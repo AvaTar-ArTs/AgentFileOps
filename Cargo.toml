@@ -10,6 +10,10 @@ version = "0.1.0"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/AvaTar-ArTs/AgentFileOps"
+homepage = "https://github.com/AvaTar-ArTs/AgentFileOps"
+description = "Safety-first remote filesystem operations for AI agents and MCP clients over SSH/SFTP without arbitrary shell access."
+keywords = ["mcp", "ssh", "sftp", "filesystem", "ai-agents"]
+categories = ["filesystem", "command-line-utilities", "network-programming"]
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
